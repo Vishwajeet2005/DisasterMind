@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+requests
+earthengine-api
+reportlab
+pydantic
+httpx
+xgboost
+scikit-learn
+onnx
+onnxruntime
+pandas
+numpy
+slowapi
+structlog
+skl2onnx
