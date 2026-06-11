@@ -28,19 +28,59 @@ const ReportPanel = ({ report, loading, error }) => {
 
   if (loading) {
     return (
-      <div className="glass-panel report-panel">
-        <div className="panel-header"><ShieldAlert size={16} /> Tactical Intelligence Report</div>
-        {/* Risk Badge Skeleton */}
-        <div className="skeleton" style={{ height: 72, width: '100%', borderRadius: 'var(--radius-md)', marginBottom: 16 }}></div>
-        {/* ML Validation Strip Skeleton */}
-        <div className="skeleton" style={{ height: 32, width: '100%', borderRadius: 'var(--radius-sm)', marginBottom: 20 }}></div>
-        {/* Summary Skeleton */}
-        <div className="skeleton skeleton-text"></div>
-        <div className="skeleton skeleton-text"></div>
-        <div className="skeleton skeleton-text short" style={{ marginBottom: 24 }}></div>
-        {/* Zones Skeleton */}
-        <div className="skeleton skeleton-box" style={{ height: 80 }}></div>
-        <div className="skeleton skeleton-box" style={{ height: 120 }}></div>
+      <div className="glass-panel report-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', position: 'relative', overflow: 'hidden' }}>
+        {/* Cinematic scanning laser effect */}
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, height: '2px',
+          background: 'linear-gradient(90deg, transparent, var(--text-cyan), transparent)',
+          boxShadow: '0 0 20px var(--text-cyan), 0 0 40px var(--text-cyan)',
+          animation: 'scan-laser 2s ease-in-out infinite alternate',
+          opacity: 0.6
+        }}></div>
+        
+        <div style={{ position: 'relative', marginBottom: 32 }}>
+          {/* Pulsing Core */}
+          <div style={{ 
+            width: 80, height: 80, 
+            borderRadius: '50%', 
+            border: '2px dashed rgba(0, 229, 255, 0.3)',
+            borderTopColor: 'var(--text-cyan)',
+            animation: 'spin 3s linear infinite',
+            position: 'absolute',
+            top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}></div>
+          <div style={{ 
+            width: 60, height: 60, 
+            borderRadius: '50%', 
+            border: '2px solid rgba(0, 229, 255, 0.1)',
+            borderBottomColor: 'var(--text-cyan)',
+            animation: 'spin 1.5s linear infinite reverse',
+            position: 'absolute',
+            top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}></div>
+          <ShieldAlert size={32} color="var(--text-cyan)" style={{ position: 'relative', zIndex: 2 }} />
+        </div>
+        
+        <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-cyan)', letterSpacing: 4, marginBottom: 12, textShadow: '0 0 10px rgba(0, 229, 255, 0.5)' }}>
+          EXECUTING NEURAL SCAN
+        </div>
+        
+        <div className="mono" style={{ fontSize: 11, color: 'var(--text-secondary)', letterSpacing: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <span>SYNTHESIZING SATELLITE TELEMETRY...</span>
+          <span style={{ opacity: 0.6 }}>RUNNING XGBOOST ENSEMBLE</span>
+        </div>
+        <style>
+          {`
+            @keyframes scan-laser {
+              0% { top: 0%; opacity: 0.2; }
+              50% { opacity: 0.8; }
+              100% { top: 100%; opacity: 0.2; }
+            }
+          `}
+        </style>
       </div>
     );
   }

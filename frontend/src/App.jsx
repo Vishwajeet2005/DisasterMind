@@ -61,19 +61,7 @@ const App = () => {
   };
 
   const renderDashboardPanel = () => {
-    if (loading) {
-      return (
-        <div className="glass-panel dashboard-panel">
-          <div className="panel-header"><Activity size={16} /> Live Telemetry</div>
-          <div className="metric-grid">
-            <div className="skeleton skeleton-box"></div>
-            <div className="skeleton skeleton-box"></div>
-            <div className="skeleton skeleton-box"></div>
-            <div className="skeleton skeleton-box"></div>
-          </div>
-        </div>
-      );
-    }
+    if (loading) return null;
     
     if (error) {
       return (
