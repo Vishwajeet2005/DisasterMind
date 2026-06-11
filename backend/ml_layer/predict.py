@@ -1,133 +1,274 @@
-import os
+"""
+DisasterMind — ML Inference Layer
+Loads both ONNX models and exposes a clean prediction API.
+Falls back to calibrated heuristics if ONNX files are missing — the pipeline
+must never crash because models haven't been trained yet.
+"""
+
+import pathlib
 import numpy as np
-import pandas as pd
-import onnxruntime as rt
+from typing import Optional
+
+# ONNX runtime — graceful import
+try:
+    import onnxruntime as ort
+    ONNX_AVAILABLE = True
+except ImportError:
+    ONNX_AVAILABLE = False
+
+BASE_DIR = pathlib.Path(__file__).parent
+
+FLOOD_MODEL_PATH    = BASE_DIR / "flood_model.onnx"
+SEVERITY_MODEL_PATH = BASE_DIR / "severity_model.onnx"
+
+# Label maps
+FLOOD_RISK_LABELS    = {0: "LOW", 1: "HIGH"}
+SEVERITY_LABELS      = {0: "LOW", 1: "MODERATE", 2: "HIGH", 3: "CRITICAL"}
+CONFIDENCE_LEVELS    = ("HIGH", "MEDIUM", "LOW")
+
 
 class MLPredictor:
+    """
+    Thin wrapper around two ONNX inference sessions.
+
+    If either model file is absent (e.g. first run before `train.py`),
+    the corresponding predict method falls back to deterministic heuristics
+    so the rest of the agent pipeline is unaffected.
+    """
+
     def __init__(self):
-        self.flood_model_path = os.path.join(os.path.dirname(__file__), 'flood_model.onnx')
-        self.severity_model_path = os.path.join(os.path.dirname(__file__), 'severity_model.onnx')
-        
-        self.flood_session = None
-        self.severity_session = None
-        
-        if os.path.exists(self.flood_model_path):
-            try:
-                self.flood_session = rt.InferenceSession(self.flood_model_path)
-            except Exception as e:
-                print(f"Failed to load flood model: {e}")
-        else:
-            print(f"Warning: {self.flood_model_path} not found.")
-            
-        if os.path.exists(self.severity_model_path):
-            try:
-                self.severity_session = rt.InferenceSession(self.severity_model_path)
-            except Exception as e:
-                print(f"Failed to load severity model: {e}")
-        else:
-            print(f"Warning: {self.severity_model_path} not found.")
-            
-        self.severity_map = {0: 'LOW', 1: 'MODERATE', 2: 'HIGH', 3: 'CRITICAL'}
+        self._flood_session:    Optional[ort.InferenceSession] = None
+        self._severity_session: Optional[ort.InferenceSession] = None
 
-    def predict_flood_risk(self, rainfall: float, temp: float, discharge: float, 
-                           water_level: float, elevation: float, pop_density: float, 
-                           infrastructure: float, history: float):
-        if not self.flood_session:
-            # Fallback heuristic
-            prob = min(1.0, (rainfall / 500) + (water_level / 10))
-            return float(prob), "High" if prob > 0.5 else "Low"
-            
-        try:
-            input_name = self.flood_session.get_inputs()[0].name
-            input_data = np.array([[rainfall, temp, discharge, water_level, elevation, 
-                                    pop_density, infrastructure, history]], dtype=np.float32)
-            
-            pred_onx = self.flood_session.run(None, {input_name: input_data})
-            label = pred_onx[0][0]
-            
-            # The structure of probabilities returned by ONNX for XGBoost depends on the converter
-            # Sometimes it's a list of dictionaries, sometimes an array.
-            if isinstance(pred_onx[1], list) and isinstance(pred_onx[1][0], dict):
-                prob = pred_onx[1][0].get(1, 0.0)
-            else:
-                prob = pred_onx[1][0][1] if len(pred_onx[1][0]) > 1 else 0.0
-            
-            risk_label = "High" if label == 1 else "Low"
-            return float(prob), risk_label
-        except Exception as e:
-            print(f"Flood prediction failed: {e}")
-            return 0.0, "Low"
+        if not ONNX_AVAILABLE:
+            print("[MLPredictor] onnxruntime not installed — using heuristic fallback")
+            return
 
-    def predict_severity(self, disaster_type: str, deaths: float, affected: float, 
-                         damage: float, year: float, month: float):
-        if not self.severity_session:
-            # Fallback heuristic
-            if deaths > 100 or affected > 500000: return 3, 'CRITICAL'
-            elif deaths > 20 or affected > 50000: return 2, 'HIGH'
-            elif deaths > 5 or affected > 5000: return 1, 'MODERATE'
-            else: return 0, 'LOW'
-            
-        # Create input DataFrame
-        input_data = pd.DataFrame([{
-            'Disaster_Type': str(disaster_type),
-            'Total_Deaths': float(deaths),
-            'Total_Affected': float(affected),
-            'Total_Damage___000_US__': float(damage),
-            'Start_Year': float(year),
-            'Start_Month': float(month)
-        }])
-        
-        inputs = {}
-        for inp in self.severity_session.get_inputs():
-            col = inp.name
-            if col in input_data.columns:
-                if inp.type == 'tensor(string)':
-                    inputs[col] = input_data[col].values.astype(object).reshape(-1, 1)
-                elif inp.type == 'tensor(double)':
-                    inputs[col] = input_data[col].values.astype(np.float64).reshape(-1, 1)
-                elif inp.type == 'tensor(float)':
-                    inputs[col] = input_data[col].values.astype(np.float32).reshape(-1, 1)
-                elif inp.type == 'tensor(int64)':
-                    inputs[col] = input_data[col].values.astype(np.int64).reshape(-1, 1)
-                else:
-                    inputs[col] = input_data[col].values.reshape(-1, 1)
-                    
-        try:
-            pred_onx = self.severity_session.run(None, inputs)
-            score = int(pred_onx[0][0])
-            label = self.severity_map.get(score, "UNKNOWN")
-            return score, label
-        except Exception as e:
-            print(f"Severity prediction failed: {e}")
-            return 0, 'LOW'
-            
-    def get_combined_prediction(self, sensor_data: dict):
-        prob, flood_label = self.predict_flood_risk(
-            float(sensor_data.get('rainfall', 0.0)),
-            float(sensor_data.get('temp', 25.0)),
-            float(sensor_data.get('discharge', 0.0)),
-            float(sensor_data.get('water_level', 0.0)),
-            float(sensor_data.get('elevation', 0.0)),
-            float(sensor_data.get('pop_density', 0.0)),
-            float(sensor_data.get('infrastructure', 0.0)),
-            float(sensor_data.get('history', 0.0))
+        # Load flood model
+        if FLOOD_MODEL_PATH.exists():
+            try:
+                self._flood_session = ort.InferenceSession(
+                    str(FLOOD_MODEL_PATH),
+                    providers=["CPUExecutionProvider"],
+                )
+                print(f"[MLPredictor] Loaded flood model: {FLOOD_MODEL_PATH}")
+            except Exception as e:
+                print(f"[MLPredictor] Failed to load flood model: {e}")
+        else:
+            print(f"[MLPredictor] flood_model.onnx not found — using heuristics. Run ml_layer/train.py first.")
+
+        # Load severity model
+        if SEVERITY_MODEL_PATH.exists():
+            try:
+                self._severity_session = ort.InferenceSession(
+                    str(SEVERITY_MODEL_PATH),
+                    providers=["CPUExecutionProvider"],
+                )
+                print(f"[MLPredictor] Loaded severity model: {SEVERITY_MODEL_PATH}")
+            except Exception as e:
+                print(f"[MLPredictor] Failed to load severity model: {e}")
+        else:
+            print(f"[MLPredictor] severity_model.onnx not found — using heuristics. Run ml_layer/train.py first.")
+
+    # ───────────────────────────────────────────────────────────────────────
+    # Public prediction methods
+    # ───────────────────────────────────────────────────────────────────────
+
+    def predict_flood_risk(
+        self,
+        rainfall: float,
+        temperature: float,
+        river_discharge: float,
+        water_level: float,
+        elevation: float,
+        population_density: float,
+        infrastructure: float,
+        historical_floods: float,
+    ) -> dict:
+        """
+        Binary flood classifier.
+
+        Returns
+        -------
+        {
+          "flood_probability": float (0.0 – 1.0),
+          "flood_risk":        "HIGH" | "MODERATE" | "LOW"
+        }
+        """
+        features = np.array(
+            [[rainfall, temperature, river_discharge, water_level,
+              elevation, population_density, infrastructure, historical_floods]],
+            dtype=np.float32,
         )
-        
-        score, severity_label = self.predict_severity(
-            str(sensor_data.get('disaster_type', 'Flood')),
-            float(sensor_data.get('deaths', 0.0)),
-            float(sensor_data.get('affected', 0.0)),
-            float(sensor_data.get('damage', 0.0)),
-            float(sensor_data.get('year', 2026.0)),
-            float(sensor_data.get('month', 1.0))
+
+        if self._flood_session is not None:
+            try:
+                input_name = self._flood_session.get_inputs()[0].name
+                outputs    = self._flood_session.run(None, {input_name: features})
+
+                # outputs[0] → predicted class; outputs[1] → probability map
+                proba = float(outputs[1][0][1]) if len(outputs) > 1 else float(outputs[0][0])
+                label_idx = int(outputs[0][0])
+
+                flood_risk = _proba_to_risk(proba)
+                return {"flood_probability": round(proba, 4), "flood_risk": flood_risk}
+            except Exception as e:
+                print(f"[MLPredictor] Flood ONNX inference error: {e}")
+
+        # ── Heuristic fallback ──────────────────────────────────────────
+        return _heuristic_flood_risk(
+            rainfall, elevation, water_level, historical_floods
         )
-        
+
+    def predict_severity(
+        self,
+        disaster_type: int,
+        hotspot_count: int,
+        rainfall: float,
+        elevation: float,
+        population_density: float,
+    ) -> dict:
+        """
+        Multi-class severity scorer.
+
+        Inputs are mapped to the training feature space:
+        [disaster_type, total_deaths_proxy, total_affected_proxy, total_damage_proxy, year, month]
+
+        Returns
+        -------
+        {
+          "severity_score": int (0-3),
+          "severity_label": "CRITICAL" | "HIGH" | "MODERATE" | "LOW"
+        }
+        """
+        import datetime
+        now = datetime.datetime.utcnow()
+
+        # Map proxy features from available sensor signals
+        deaths_proxy   = min(hotspot_count * 2.5, 150.0)          # rough proxy
+        affected_proxy = population_density * 0.3 * (rainfall / 10.0)
+        damage_proxy   = rainfall * elevation / 100.0
+
+        features = np.array(
+            [[float(disaster_type), deaths_proxy, affected_proxy,
+              damage_proxy, float(now.year), float(now.month)]],
+            dtype=np.float32,
+        )
+
+        if self._severity_session is not None:
+            try:
+                input_name = self._severity_session.get_inputs()[0].name
+                outputs    = self._severity_session.run(None, {input_name: features})
+                score = int(outputs[0][0])
+                score = max(0, min(3, score))
+                return {
+                    "severity_score": score,
+                    "severity_label": SEVERITY_LABELS[score],
+                }
+            except Exception as e:
+                print(f"[MLPredictor] Severity ONNX inference error: {e}")
+
+        # ── Heuristic fallback ──────────────────────────────────────────
+        return _heuristic_severity(hotspot_count, rainfall, elevation, population_density)
+
+    def get_combined_prediction(self, sensor_data: dict) -> dict:
+        """
+        Run both models and return a unified prediction dict.
+
+        Expected keys in sensor_data (all optional — missing → 0)
+        -----------------------------------------------------------
+        rainfall, temperature, river_discharge, water_level,
+        elevation, population_density, infrastructure, historical_floods,
+        hotspot_count, disaster_type
+        """
+        def _g(key, default=0.0):
+            return float(sensor_data.get(key) or default)
+
+        # ── flood prediction ──
+        flood_result = self.predict_flood_risk(
+            rainfall          = _g("rainfall", 50.0),
+            temperature       = _g("temperature", 28.0),
+            river_discharge   = _g("river_discharge", 100.0),
+            water_level       = _g("water_level", 3.0),
+            elevation         = _g("elevation", 200.0),
+            population_density= _g("population_density", 300.0),
+            infrastructure    = _g("infrastructure", 1.0),
+            historical_floods = _g("historical_floods", 1.0),
+        )
+
+        # ── severity prediction ──
+        severity_result = self.predict_severity(
+            disaster_type     = int(_g("disaster_type", 2)),  # 2 ≈ flood
+            hotspot_count     = int(_g("hotspot_count", 0)),
+            rainfall          = _g("rainfall", 50.0),
+            elevation         = _g("elevation", 200.0),
+            population_density= _g("population_density", 300.0),
+        )
+
+        # ── confidence — based on how many real sensor values were provided ──
+        provided = sum(1 for k in [
+            "rainfall", "temperature", "elevation",
+            "water_level", "population_density", "hotspot_count"
+        ] if sensor_data.get(k) is not None and sensor_data[k] != 0)
+        confidence = CONFIDENCE_LEVELS[max(0, 2 - (provided // 2))]
+
         return {
-            'flood_probability': prob,
-            'flood_risk': flood_label,
-            'severity_score': score,
-            'severity_label': severity_label,
-            'ml_confidence': prob * 0.9 if score > 0 else 0.5
+            "flood_probability": flood_result["flood_probability"],
+            "flood_risk":        flood_result["flood_risk"],
+            "severity_score":    severity_result["severity_score"],
+            "severity_label":    severity_result["severity_label"],
+            "ml_confidence":     confidence,
         }
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Heuristic fallbacks (deterministic, calibrated for Indian disaster context)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _proba_to_risk(proba: float) -> str:
+    if proba >= 0.70:
+        return "HIGH"
+    elif proba >= 0.45:
+        return "MODERATE"
+    return "LOW"
+
+
+def _heuristic_flood_risk(
+    rainfall: float,
+    elevation: float,
+    water_level: float,
+    historical_floods: float,
+) -> dict:
+    score = 0.0
+    score += min(rainfall / 200.0, 0.4)          # up to 0.4 from rainfall
+    score += max(0, (100.0 - elevation) / 250.0)  # up to 0.4 from low elevation
+    score += min(water_level / 10.0, 0.1)
+    score += historical_floods * 0.1
+
+    proba = min(round(score, 4), 1.0)
+    return {"flood_probability": proba, "flood_risk": _proba_to_risk(proba)}
+
+
+def _heuristic_severity(
+    hotspot_count: int,
+    rainfall: float,
+    elevation: float,
+    population_density: float,
+) -> dict:
+    score = 0
+    if rainfall > 150 or hotspot_count > 20:
+        score = 3
+    elif rainfall > 80 or hotspot_count > 10:
+        score = 2
+    elif rainfall > 30 or hotspot_count > 3:
+        score = 1
+
+    # Upscale if high elevation (landslide risk) + high density
+    if elevation > 500 and population_density > 500 and score < 2:
+        score = 2
+
+    return {"severity_score": score, "severity_label": SEVERITY_LABELS[score]}
+
+
+# ── Module-level singleton ────────────────────────────────────────────────
 predictor = MLPredictor()

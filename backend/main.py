@@ -1,127 +1,230 @@
-import os
+"""
+DisasterMind — FastAPI Application
+Provides all HTTP endpoints, middleware (CORS, rate limiting, request logging),
+and the PDF report download route.
+"""
+
 import json
+import os
 import time
+from pathlib import Path
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
+from slowapi.util import get_remote_address
+from dotenv import load_dotenv
 
-from backend.agent import run_disaster_analysis
-from backend.report_generator import generate_pdf
-from backend.ml_layer.predict import predictor
-from backend.ai_brain import brain
-from backend.logger import log_request
+from agent import run_disaster_analysis
+from logger import log_request, log_error
+from report_generator import generate_pdf
+from ml_layer.predict import predictor
 
+load_dotenv()
+
+# ── Rate limiter ──────────────────────────────────────────────────────────────
 limiter = Limiter(key_func=get_remote_address)
-app = FastAPI(title="DisasterMind API")
 
+# ── App ───────────────────────────────────────────────────────────────────────
+app = FastAPI(
+    title       = "DisasterMind API",
+    description = "Autonomous Disaster Response Intelligence Agent",
+    version     = "1.0.0",
+)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# ── CORS ──────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins     = ["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials = True,
+    allow_methods     = ["*"],
+    allow_headers     = ["*"],
 )
+
+# ── Demo cache directory ──────────────────────────────────────────────────────
+DEMO_CACHE_DIR = Path(__file__).parent / "demo_cache"
+DEMO_CACHE_DIR.mkdir(exist_ok=True)
+
+# ── Preset regions ────────────────────────────────────────────────────────────
+PRESET_REGIONS = {
+    "wayanad": {
+        "id":      "wayanad",
+        "name":    "Wayanad, Kerala",
+        "lat":     11.6,
+        "lon":     76.0,
+        "bbox":    {"lat_min": 11.3, "lat_max": 11.9, "lon_min": 75.7, "lon_max": 76.4},
+        "context": "Landslide July 2024 — 300+ deaths",
+    },
+    "assam": {
+        "id":      "assam",
+        "name":    "Kamrup, Assam",
+        "lat":     26.2,
+        "lon":     91.7,
+        "bbox":    {"lat_min": 25.9, "lat_max": 26.5, "lon_min": 91.4, "lon_max": 92.0},
+        "context": "Annual flood zone — Brahmaputra river",
+    },
+    "uttarakhand": {
+        "id":      "uttarakhand",
+        "name":    "Chamoli, Uttarakhand",
+        "lat":     30.4,
+        "lon":     79.3,
+        "bbox":    {"lat_min": 30.1, "lat_max": 30.7, "lon_min": 79.0, "lon_max": 79.6},
+        "context": "Glacier burst risk — Himalayan region",
+    },
+}
+
+# ── Request / response schemas ────────────────────────────────────────────────
 
 class AnalysisRequest(BaseModel):
     region_name: str
-    lat: float
-    lon: float
-    bbox: list[float]  # [lat_min, lon_min, lat_max, lon_max]
+    lat:         float
+    lon:         float
+    bbox:        dict
+
+class PDFRequest(BaseModel):
+    analysis: dict
+
+
+# ── Middleware: log every request with timing ────────────────────────────────
 
 @app.middleware("http")
-async def add_process_time_header_and_log(request: Request, call_next):
-    start_time = time.time()
+async def _request_logger(request: Request, call_next):
+    t0       = time.time()
     response = await call_next(request)
-    duration_ms = int((time.time() - start_time) * 1000)
-    # Exclude /health from aggressive logging if needed, but logging all for now
-    log_request(
-        event="HTTP Request",
-        region="System",
-        user_ip=request.client.host if request.client else "unknown",
-        method=request.method,
-        url=str(request.url),
-        status_code=response.status_code,
-        duration_ms=duration_ms
-    )
+    elapsed  = int((time.time() - t0) * 1000)
+    try:
+        log_request(
+            event            = "http_request",
+            region           = "—",
+            user_ip          = request.client.host if request.client else "unknown",
+            endpoint         = str(request.url.path),
+            method           = request.method,
+            status_code      = response.status_code,
+            response_time_ms = elapsed,
+        )
+    except Exception:
+        pass
     return response
 
-@app.get("/health")
-def health_check():
+
+# ── Routes ────────────────────────────────────────────────────────────────────
+
+@app.get("/")
+async def root():
     return {
-        "status": "online",
-        "models": {
-            "flood_model": "loaded" if predictor.flood_session else "missing",
-            "severity_model": "loaded" if predictor.severity_session else "missing"
-        },
-        "groq_llm": "connected" if brain.client else "missing_api_key"
+        "name":    "DisasterMind",
+        "version": "1.0.0",
+        "status":  "operational",
+        "tagline": "Autonomous Disaster Response Intelligence for India",
     }
 
-@app.get("/regions")
-def get_regions():
+
+@app.get("/health")
+async def health():
+    # Check whether ONNX models are loaded
+    flood_loaded    = predictor._flood_session    is not None
+    severity_loaded = predictor._severity_session is not None
+
+    if flood_loaded and severity_loaded:
+        ml_status = "loaded"
+    elif not flood_loaded and not severity_loaded:
+        ml_status = "fallback"
+    else:
+        ml_status = "partial"
+
+    groq_key = os.getenv("GROQ_API_KEY", "")
     return {
-        "regions": [
-            {
-                "id": "wayanad",
-                "name": "Wayanad, Kerala",
-                "lat": 11.6854,
-                "lon": 76.1320,
-                "bbox": [11.5, 75.9, 11.9, 76.3],
-                "context": "High risk of landslides due to steep terrain and heavy monsoon rains."
-            },
-            {
-                "id": "kamrup",
-                "name": "Kamrup, Assam",
-                "lat": 26.3161,
-                "lon": 91.5984,
-                "bbox": [26.1, 91.3, 26.5, 91.8],
-                "context": "Severe riverine flooding risk from Brahmaputra basin."
-            },
-            {
-                "id": "chamoli",
-                "name": "Chamoli, Uttarakhand",
-                "lat": 30.2736,
-                "lon": 79.3234,
-                "bbox": [30.0, 79.1, 30.5, 79.5],
-                "context": "Vulnerable to glacial bursts, flash floods, and seismic activity."
-            }
-        ]
+        "status":     "healthy",
+        "ml_models":  ml_status,
+        "groq":       "connected" if groq_key else "key_missing",
+        "firms":      "key_set"   if os.getenv("NASA_FIRMS_KEY") else "key_missing",
+        "gee":        "project_set" if os.getenv("GEE_PROJECT")  else "key_missing",
     }
+
 
 @app.post("/analyze")
 @limiter.limit("10/minute")
-async def analyze_region(request: Request, req: AnalysisRequest):
+async def analyze(request: Request, body: AnalysisRequest):
+    """
+    Main analysis endpoint — runs the full autonomous pipeline.
+    Rate limited: 10 requests/minute per IP.
+    """
+    t0      = time.time()
+    user_ip = request.client.host if request.client else "unknown"
+
     try:
-        # Expected tuple for bbox: (lat_min, lon_min, lat_max, lon_max)
-        payload = run_disaster_analysis(req.region_name, req.lat, req.lon, tuple(req.bbox))
-        return payload
+        result = await run_disaster_analysis(
+            region_name = body.region_name,
+            lat         = body.lat,
+            lon         = body.lon,
+            bbox        = body.bbox,
+        )
+        elapsed = int((time.time() - t0) * 1000)
+        log_request(
+            event            = "analysis_complete",
+            region           = body.region_name,
+            user_ip          = user_ip,
+            risk_level       = result.get("situation_report", {}).get("risk_level", "UNKNOWN"),
+            response_time_ms = elapsed,
+        )
+        return result
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        log_error("analysis_failed", e, region=body.region_name, user_ip=user_ip)
+        raise HTTPException(status_code=500, detail=f"Analysis pipeline failed: {str(e)}")
+
 
 @app.get("/demo/{region}")
-def get_demo_analysis(region: str):
-    cache_file = os.path.join(os.path.dirname(__file__), "demo_cache", f"{region}.json")
-    if os.path.exists(cache_file):
-        with open(cache_file, "r") as f:
-            return json.load(f)
-    raise HTTPException(status_code=404, detail="Demo cache not found for this region.")
+async def demo(region: str):
+    """
+    Return pre-cached analysis for demo regions.
+    Regions: wayanad | assam | uttarakhand
+    """
+    region = region.lower().strip()
+    cache_file = DEMO_CACHE_DIR / f"{region}.json"
+
+    if not cache_file.exists():
+        raise HTTPException(
+            status_code = 404,
+            detail      = f"No demo cache found for '{region}'. Run demo_cache.py first.",
+        )
+    try:
+        with open(cache_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data
+    except Exception as e:
+        log_error("demo_cache_read_failed", e, region=region)
+        raise HTTPException(status_code=500, detail="Failed to read demo cache")
+
+
+@app.get("/regions")
+async def regions():
+    """Return the 3 preset disaster regions for the demo map."""
+    return list(PRESET_REGIONS.values())
+
 
 @app.post("/report/pdf")
-async def get_pdf_report(payload: dict):
+async def report_pdf(body: PDFRequest):
+    """
+    Generate a PDF situation report from analysis JSON.
+    Returns application/pdf binary stream.
+    """
     try:
-        pdf_bytes = generate_pdf(payload)
+        pdf_bytes = generate_pdf(body.analysis)
+        region    = body.analysis.get("region", "disastermind_report")
+        filename  = f"DisasterMind_{region.replace(' ', '_').replace(',', '')}.pdf"
+
         return StreamingResponse(
-            pdf_bytes,
-            media_type="application/pdf",
-            headers={
-                "Content-Disposition": f"attachment; filename=DisasterMind_Report.pdf"
-            }
+            iter([pdf_bytes]),
+            media_type = "application/pdf",
+            headers    = {"Content-Disposition": f'attachment; filename="{filename}"'},
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        log_error("pdf_generation_failed", e)
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {str(e)}")

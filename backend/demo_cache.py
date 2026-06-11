@@ -1,61 +1,99 @@
-import os
+"""
+DisasterMind — Demo Cache Generator
+Run this BEFORE recording the demo video.
+Pre-generates analysis results for all 3 regions so /demo/{region}
+returns instantly without any live API calls.
+
+Usage
+-----
+    cd backend
+    python demo_cache.py
+    # Creates: demo_cache/wayanad.json, assam.json, uttarakhand.json
+"""
+
+import asyncio
 import json
-import time
+import pathlib
+import sys
 
-from backend.agent import run_disaster_analysis
+from agent import run_disaster_analysis
 
+CACHE_DIR = pathlib.Path(__file__).parent / "demo_cache"
+CACHE_DIR.mkdir(exist_ok=True)
+
+# ── Preset regions (mirrors main.py) ─────────────────────────────────────────
 REGIONS = [
     {
-        "id": "wayanad",
+        "id":   "wayanad",
         "name": "Wayanad, Kerala",
-        "lat": 11.6854,
-        "lon": 76.1320,
-        "bbox": [11.5, 75.9, 11.9, 76.3]
+        "lat":  11.6,
+        "lon":  76.0,
+        "bbox": {"lat_min": 11.3, "lat_max": 11.9, "lon_min": 75.7, "lon_max": 76.4},
     },
     {
-        "id": "kamrup",
+        "id":   "assam",
         "name": "Kamrup, Assam",
-        "lat": 26.3161,
-        "lon": 91.5984,
-        "bbox": [26.1, 91.3, 26.5, 91.8]
+        "lat":  26.2,
+        "lon":  91.7,
+        "bbox": {"lat_min": 25.9, "lat_max": 26.5, "lon_min": 91.4, "lon_max": 92.0},
     },
     {
-        "id": "chamoli",
+        "id":   "uttarakhand",
         "name": "Chamoli, Uttarakhand",
-        "lat": 30.2736,
-        "lon": 79.3234,
-        "bbox": [30.0, 79.1, 30.5, 79.5]
-    }
+        "lat":  30.4,
+        "lon":  79.3,
+        "bbox": {"lat_min": 30.1, "lat_max": 30.7, "lon_min": 79.0, "lon_max": 79.6},
+    },
 ]
 
-def build_demo_cache():
-    cache_dir = os.path.join(os.path.dirname(__file__), "demo_cache")
-    os.makedirs(cache_dir, exist_ok=True)
-    
-    print("Starting Demo Cache Generation...")
-    
+
+async def _generate_cache(region: dict) -> dict:
+    rid    = region["id"]
+    output = CACHE_DIR / f"{rid}.json"
+
+    print(f"\n[DemoCache] Generating {rid}...")
+    try:
+        result = await run_disaster_analysis(
+            region_name = region["name"],
+            lat         = region["lat"],
+            lon         = region["lon"],
+            bbox        = region["bbox"],
+        )
+        with open(output, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False, default=str)
+        risk = result.get("situation_report", {}).get("risk_level", "?")
+        t_ms = result.get("processing_time_ms", "?")
+        print(f"[DemoCache] ✓ {rid}.json saved — Risk: {risk} — {t_ms}ms")
+        return result
+    except Exception as e:
+        print(f"[DemoCache] ✗ Failed for {rid}: {e}")
+        import traceback; traceback.print_exc()
+        return {}
+
+
+async def main():
+    print("[DemoCache] DisasterMind Demo Cache Generator")
+    print("[DemoCache] " + "=" * 50)
+    print(f"[DemoCache] Target directory: {CACHE_DIR}")
+
+    results = []
     for region in REGIONS:
-        print(f"\n--- Processing {region['name']} ---")
-        try:
-            # Sleep a bit to avoid hitting rate limits on APIs
-            time.sleep(2)
-            
-            payload = run_disaster_analysis(
-                region_name=region['name'],
-                lat=region['lat'],
-                lon=region['lon'],
-                bbox=tuple(region['bbox'])
-            )
-            
-            file_path = os.path.join(cache_dir, f"{region['id']}.json")
-            with open(file_path, "w") as f:
-                json.dump(payload, f, indent=4)
-                
-            print(f"Saved cache for {region['id']} to {file_path}")
-        except Exception as e:
-            print(f"Failed to cache {region['id']}: {e}")
-            
-    print("\nDemo Cache Generation Complete!")
+        r = await _generate_cache(region)
+        results.append(r)
+
+    print("\n[DemoCache] " + "=" * 50)
+    print("[DemoCache] Summary:")
+    for region, result in zip(REGIONS, results):
+        status = "✓ CACHED" if result else "✗ FAILED"
+        print(f"  {status}  {region['id']}.json")
+
+    failed = sum(1 for r in results if not r)
+    if failed:
+        print(f"\n[DemoCache] WARNING: {failed} region(s) failed — check API keys in .env")
+        sys.exit(1)
+    else:
+        print("\n[DemoCache] All demo caches ready. Safe to record demo video.")
+
 
 if __name__ == "__main__":
-    build_demo_cache()
+    asyncio.run(main())
