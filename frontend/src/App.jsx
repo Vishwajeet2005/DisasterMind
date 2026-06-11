@@ -4,6 +4,8 @@ import MapView from './components/MapView';
 import './styles/tokens.css';
 import './App.css';
 
+import ReportPanel from './components/ReportPanel';
+
 const App = () => {
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [report, setReport] = useState(null);
@@ -25,14 +27,12 @@ const App = () => {
     setReport(null);
     
     try {
-      // Trying to fetch the pre-cached demo data from our backend
       const response = await fetch(`http://localhost:8000/demo/${region.id}`);
       if (!response.ok) {
         throw new Error("Demo cache not found or API unavailable");
       }
       const data = await response.json();
       
-      // Simulate slight delay to show off skeletons
       setTimeout(() => {
         setReport(data);
         setLoading(false);
@@ -108,95 +108,8 @@ const App = () => {
     );
   };
 
-  const renderReportPanel = () => {
-    if (loading) {
-      return (
-        <div className="surface-panel report-panel">
-          <div className="panel-header"><ShieldAlert size={16} /> Tactical Intelligence Report</div>
-          <div className="skeleton skeleton-text" style={{ height: 24, width: '40%' }}></div>
-          <div className="skeleton skeleton-text" style={{ height: 60, marginTop: 16 }}></div>
-          <div className="skeleton skeleton-text" style={{ height: 100, marginTop: 16 }}></div>
-          <div className="skeleton skeleton-text" style={{ height: 40, marginTop: 16 }}></div>
-        </div>
-      );
-    }
-
-    if (!report) {
-      return (
-        <div className="surface-panel report-panel">
-          <div className="empty-state">No active analysis</div>
-        </div>
-      );
-    }
-
-    const sr = report.situation_report;
-    const riskColorVar = `var(--color-${sr?.risk_level?.toLowerCase() || 'low'})`;
-    const riskBgVar = `var(--bg-${sr?.risk_level?.toLowerCase() || 'low'})`;
-    const riskBorderVar = `var(--border-${sr?.risk_level?.toLowerCase() || 'low'})`;
-
-    return (
-      <div className="surface-panel report-panel">
-        <div className="panel-header"><ShieldAlert size={16} /> Tactical Intelligence Report</div>
-        
-        {/* Risk Banner */}
-        <div style={{ 
-          padding: 16, 
-          backgroundColor: riskBgVar, 
-          border: riskBorderVar, 
-          borderRadius: 'var(--radius-md)',
-          color: riskColorVar,
-          fontWeight: 700,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 16
-        }}>
-          <span>RISK: {sr?.risk_level}</span>
-          <span className="mono">SCORE: {sr?.risk_score}</span>
-        </div>
-
-        {/* Summary */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Situation Summary</div>
-          <div style={{ fontSize: 14, lineHeight: 1.5 }}>{sr?.situation_summary}</div>
-        </div>
-
-        {/* Actions Timeline */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Action Timeline</div>
-          <div style={{ border: 'var(--border-subtle)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-            {sr?.action_timeline?.map((act, i) => (
-              <div key={i} style={{ 
-                display: 'flex', 
-                padding: '10px 12px', 
-                borderBottom: i !== sr.action_timeline.length - 1 ? 'var(--border-subtle)' : 'none',
-                fontSize: 13
-              }}>
-                <div className="mono" style={{ width: '80px', fontWeight: 600, color: 'var(--text-secondary)' }}>{act.timeframe}</div>
-                <div style={{ flex: 1 }}>{act.action}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Priority Zones */}
-        {sr?.priority_zones?.length > 0 && (
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Priority Zones</div>
-            <ul style={{ paddingLeft: 20, fontSize: 13, lineHeight: 1.6 }}>
-              {sr.priority_zones.map((z, i) => (
-                <li key={i}><strong>{z.zone_name}</strong>: {z.reason}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="app-container">
-      {/* Topbar */}
       <div className="topbar">
         <div className="topbar-brand">
           <Activity className="brand-icon" size={20} />
@@ -211,7 +124,6 @@ const App = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="main-content">
         <div className="panel-left surface-panel" style={{ padding: 0 }}>
           <MapView selectedRegion={selectedRegion} onSelectRegion={handleSelectRegion} />
@@ -219,7 +131,7 @@ const App = () => {
         
         <div className="panel-right">
           {renderDashboardPanel()}
-          {renderReportPanel()}
+          <ReportPanel report={report} loading={loading} error={error} />
         </div>
       </div>
     </div>
