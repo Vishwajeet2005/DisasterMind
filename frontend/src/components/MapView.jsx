@@ -58,15 +58,15 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
       zoomControl={true}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="Google Streets (Live View)">
+        <LayersControl.BaseLayer checked name="Tactical Dark (CartoDB)">
           <TileLayer
-            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
-            attribution='&copy; Google Maps'
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
             maxZoom={20}
           />
         </LayersControl.BaseLayer>
 
-        <LayersControl.BaseLayer name="Google Hybrid (Satellite + Streets)">
+        <LayersControl.BaseLayer name="Google Satellite (Hybrid)">
           <TileLayer
             url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
             attribution='&copy; Google Maps'
@@ -74,10 +74,11 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
           />
         </LayersControl.BaseLayer>
 
-        <LayersControl.BaseLayer name="OpenStreetMap (Standard)">
+        <LayersControl.BaseLayer name="Google Streets (Standard)">
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; OpenStreetMap contributors'
+            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            attribution='&copy; Google Maps'
+            maxZoom={20}
           />
         </LayersControl.BaseLayer>
         
@@ -112,13 +113,21 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
         />
       ))}
 
-      {selectedRegion && selectedRegion.bbox && (
-        <Rectangle
+      {/* Display selected region bounding box */}
+      {selectedRegion?.bbox && (
+        <Rectangle 
           bounds={[
             [selectedRegion.bbox[0], selectedRegion.bbox[1]],
             [selectedRegion.bbox[2], selectedRegion.bbox[3]]
           ]}
-          pathOptions={{ color: boxColor, weight: 2, fillOpacity: 0.15 }}
+          pathOptions={{ 
+            color: boxColor, 
+            weight: 2, 
+            fillColor: boxColor, 
+            fillOpacity: 0.05,
+            dashArray: '5, 10',
+            lineCap: 'square'
+          }} 
         />
       )}
     </MapContainer>

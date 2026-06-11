@@ -173,10 +173,26 @@ const App = () => {
                  onClick={handleRunAnalysis}
                  style={{
                    display: 'flex', alignItems: 'center', gap: 12,
-                   padding: '16px 32px', backgroundColor: 'var(--color-critical)',
-                   color: 'white', border: 'none', borderRadius: 4,
-                   fontSize: 16, fontWeight: 700, letterSpacing: 1.5,
-                   cursor: 'pointer', boxShadow: '0 8px 16px rgba(211, 47, 47, 0.4)'
+                   padding: '16px 32px', 
+                   backgroundColor: 'rgba(255, 0, 60, 0.1)',
+                   backdropFilter: 'blur(8px)',
+                   color: '#FF003C', 
+                   border: '1px solid rgba(255, 0, 60, 0.5)', 
+                   borderRadius: 'var(--radius-md)',
+                   fontSize: 14, fontWeight: 700, letterSpacing: 2,
+                   cursor: 'pointer', 
+                   boxShadow: '0 0 20px rgba(255, 0, 60, 0.2), inset 0 0 10px rgba(255, 0, 60, 0.1)',
+                   textShadow: '0 0 8px rgba(255, 0, 60, 0.8)',
+                   textTransform: 'uppercase',
+                   transition: 'all 0.3s ease'
+                 }}
+                 onMouseEnter={(e) => {
+                   e.currentTarget.style.backgroundColor = 'rgba(255, 0, 60, 0.25)';
+                   e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 0, 60, 0.4), inset 0 0 15px rgba(255, 0, 60, 0.2)';
+                 }}
+                 onMouseLeave={(e) => {
+                   e.currentTarget.style.backgroundColor = 'rgba(255, 0, 60, 0.1)';
+                   e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 0, 60, 0.2), inset 0 0 10px rgba(255, 0, 60, 0.1)';
                  }}
                >
                  <Crosshair size={20} /> INITIATE LIVE THREAT ANALYSIS

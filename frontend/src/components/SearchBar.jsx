@@ -108,14 +108,26 @@ const SearchBar = ({ onSearch }) => {
           disabled={isSearching}
           style={{
             padding: '0 20px',
-            backgroundColor: 'var(--color-critical)',
-            color: 'white',
-            border: 'none',
+            backgroundColor: 'transparent',
+            color: 'var(--color-low)', // Cyan
+            borderLeft: '1px solid rgba(0, 229, 255, 0.3)',
+            borderTop: 'none',
+            borderRight: 'none',
+            borderBottom: 'none',
             cursor: isSearching ? 'wait' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'background-color 0.2s ease'
+            transition: 'all 0.2s ease',
+            textShadow: '0 0 8px rgba(0,229,255,0.6)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(0, 229, 255, 0.1)';
+            e.currentTarget.style.boxShadow = 'inset 0 0 10px rgba(0,229,255,0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           {isSearching ? <Loader size={18} className="spin" /> : <Search size={18} />}
