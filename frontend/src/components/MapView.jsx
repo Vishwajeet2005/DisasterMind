@@ -12,8 +12,8 @@ const PRESETS = [
 
 const pulsingIcon = new L.DivIcon({
   className: 'custom-pulsing-icon',
-  iconSize: [16, 16],
-  iconAnchor: [8, 8]
+  iconSize: [24, 24],
+  iconAnchor: [12, 12]
 });
 
 // Component to handle map centering when a region is selected
