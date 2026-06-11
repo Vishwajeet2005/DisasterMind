@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Rectangle, useMap, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, WMSTileLayer, Marker, Rectangle, useMap, LayersControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -87,6 +87,16 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
             attribution='Tiles &copy; Esri'
           />
         </LayersControl.BaseLayer>
+
+        <LayersControl.Overlay name="NASA FIRMS (Thermal Anomalies)">
+          <WMSTileLayer
+            url="https://firms.modaps.eosdis.nasa.gov/mapserver/wms/fires/DEMO_KEY/"
+            layers="fires_viirs_snpp,fires_modis"
+            format="image/png"
+            transparent={true}
+            attribution="&copy; NASA FIRMS"
+          />
+        </LayersControl.Overlay>
       </LayersControl>
       
       <MapUpdater center={center} bbox={selectedRegion?.bbox} />
