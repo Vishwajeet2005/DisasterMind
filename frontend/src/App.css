@@ -16,20 +16,23 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  border-bottom: var(--border-inverse);
+  border-bottom: 2px solid var(--color-critical); /* Red emergency line */
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  z-index: 1000;
 }
 
 .topbar-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 16px;
 }
 
 .brand-icon {
-  color: var(--color-critical);
+  color: var(--text-inverse);
 }
 
 .topbar-status {
@@ -45,6 +48,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  background-color: rgba(255,255,255,0.1);
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 
 .dot {
@@ -96,12 +103,14 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   color: var(--text-secondary);
   margin-bottom: 16px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  border-bottom: var(--border-subtle);
+  padding-bottom: 8px;
 }
 
 /* Skeleton Loaders */
@@ -124,14 +133,14 @@
 .skeleton-box {
   height: 64px;
   width: 100%;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   margin-bottom: 12px;
 }
 
 @keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 0.3; }
-  100% { opacity: 0.6; }
+  0% { opacity: 0.8; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.8; }
 }
 
 /* Typography Helpers */
@@ -148,20 +157,23 @@
 .metric-card {
   padding: 12px;
   border: var(--border-subtle);
-  border-radius: var(--radius-md);
-  background-color: var(--bg-primary);
+  border-radius: var(--radius-sm);
+  background-color: #FAFAFA;
 }
 
 .metric-label {
   font-size: 12px;
+  font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 4px;
+  text-transform: uppercase;
 }
 
 .metric-value {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: var(--text-primary);
+  font-family: var(--font-mono);
 }
 
 .error-state {
@@ -184,4 +196,7 @@
   color: var(--text-secondary);
   text-align: center;
   padding: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
