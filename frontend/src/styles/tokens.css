@@ -13,12 +13,12 @@
   --bg-glass-highlight: rgba(241, 245, 249, 0.9); /* slate-100 */
   
   /* Borders - Subtle Grays */
-  --border-glass: 1px solid rgba(226, 232, 240, 0.8); /* slate-200 */
+  --border-glass: 1px solid rgba(226, 232, 240, 0.9); /* slate-200 */
   --border-subtle: 1px solid rgba(241, 245, 249, 0.6);
   
   /* Shadows - Soft Professional Drop Shadows instead of Neon Glows */
-  --shadow-glass: 0 10px 40px -10px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
-  --shadow-elevated: 0 20px 40px -10px rgba(15, 23, 42, 0.12);
+  --shadow-glass: 0 16px 56px -16px rgba(15, 23, 42, 0.15), 0 4px 8px -4px rgba(15, 23, 42, 0.05);
+  --shadow-elevated: 0 24px 64px -16px rgba(15, 23, 42, 0.18);
   
   /* Blur amounts */
   --glass-blur: blur(24px);
@@ -56,9 +56,9 @@
   --border-low: 1px solid rgba(22, 163, 74, 0.2);
 
   /* Geometric Radii */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-pill: 9999px;
 }
 

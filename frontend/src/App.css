@@ -96,9 +96,9 @@
 /* Floating Sidebar (Right) */
 .floating-sidebar {
   position: absolute;
-  top: 24px;
-  right: 24px;
-  bottom: 24px;
+  top: 40px;
+  right: 40px;
+  bottom: 40px;
   width: 420px;
   display: flex;
   flex-direction: column;

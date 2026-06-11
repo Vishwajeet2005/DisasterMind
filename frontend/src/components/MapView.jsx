@@ -122,9 +122,9 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
           ]}
           pathOptions={{ 
             color: boxColor, 
-            weight: 2, 
+            weight: 3, 
             fillColor: boxColor, 
-            fillOpacity: 0.05,
+            fillOpacity: 0.2,
             dashArray: '5, 10',
             lineCap: 'square'
           }} 
