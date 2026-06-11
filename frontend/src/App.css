@@ -6,6 +6,15 @@
   display: flex;
 }
 
+.map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
 /* Floating HUD Elements */
 .hud-layer {
   position: absolute;
