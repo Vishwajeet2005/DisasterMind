@@ -41,7 +41,15 @@ async def add_process_time_header_and_log(request: Request, call_next):
     response = await call_next(request)
     duration_ms = int((time.time() - start_time) * 1000)
     # Exclude /health from aggressive logging if needed, but logging all for now
-    log_request(request.method, str(request.url), response.status_code, duration_ms)
+    log_request(
+        event="HTTP Request",
+        region="System",
+        user_ip=request.client.host if request.client else "unknown",
+        method=request.method,
+        url=str(request.url),
+        status_code=response.status_code,
+        duration_ms=duration_ms
+    )
     return response
 
 @app.get("/health")
