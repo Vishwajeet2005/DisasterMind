@@ -1,0 +1,8 @@
+/* Cleared default Vite styles to prevent interference with DisasterMind layout */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}

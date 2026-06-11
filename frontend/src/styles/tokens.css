@@ -1,0 +1,94 @@
+:root {
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Backgrounds */
+  --bg-primary: #F8F9FA;
+  --bg-surface: #FFFFFF;
+  --bg-sidebar: #0F1923;
+  --bg-map: #1A2634;
+
+  /* Text Colors */
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-inverse: #FFFFFF;
+  --text-inverse-secondary: #A0AEC0;
+
+  /* Risk Levels - Critical */
+  --color-critical: #C41E3A;
+  --bg-critical: rgba(196, 30, 58, 0.08);
+  --border-critical: 1px solid rgba(196, 30, 58, 0.2);
+
+  /* Risk Levels - High */
+  --color-high: #D4711A;
+  --bg-high: rgba(212, 113, 26, 0.08);
+  --border-high: 1px solid rgba(212, 113, 26, 0.2);
+
+  /* Risk Levels - Moderate */
+  --color-moderate: #B45309;
+  --bg-moderate: rgba(180, 83, 9, 0.08);
+  --border-moderate: 1px solid rgba(180, 83, 9, 0.2);
+
+  /* Risk Levels - Low */
+  --color-low: #166534;
+  --bg-low: rgba(22, 101, 52, 0.08);
+  --border-low: 1px solid rgba(22, 101, 52, 0.2);
+
+  /* Structure & Borders */
+  --border-subtle: 1px solid rgba(0, 0, 0, 0.08);
+  --border-inverse: 1px solid rgba(255, 255, 255, 0.1);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px; /* Strict max 12px */
+  
+  /* Shadows */
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base utility classes avoiding gradients and following strict rules */
+.surface-panel {
+  background-color: var(--bg-surface);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-subtle);
+}
+
+.map-container {
+  background-color: var(--bg-map);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* Leaflet specific overrides */
+.leaflet-container {
+  background-color: var(--bg-map) !important;
+  font-family: var(--font-sans);
+}
+
+.custom-pulsing-icon {
+  background: var(--color-critical);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.7);
+  animation: pulse-red 1.5s infinite;
+}
+
+@keyframes pulse-red {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(196, 30, 58, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(196, 30, 58, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(196, 30, 58, 0); }
+}
