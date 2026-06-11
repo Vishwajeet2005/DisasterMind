@@ -1,6 +1,7 @@
-__pycache__
+.env
+__pycache__/
 *.pyc
-node_modules
+node_modules/
+.DS_Store
 demo_cache/*.json
 *.onnx
-.DS_Store
