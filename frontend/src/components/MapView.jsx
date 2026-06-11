@@ -90,7 +90,7 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
 
         <LayersControl.Overlay name="NASA FIRMS (Thermal Anomalies)">
           <WMSTileLayer
-            url="https://firms.modaps.eosdis.nasa.gov/mapserver/wms/fires/DEMO_KEY/"
+            url="https://firms.modaps.eosdis.nasa.gov/mapserver/wms/fires/727fbb7f706ccba9de5da20241b4f726/"
             layers="fires_viirs_snpp,fires_modis"
             format="image/png"
             transparent={true}

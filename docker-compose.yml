@@ -11,6 +11,7 @@ services:
     volumes:
       - ./backend/demo_cache:/app/backend/demo_cache
       - ./backend/ml_layer:/app/backend/ml_layer
+      - ~/.config/earthengine/credentials:/root/.config/earthengine/credentials:ro
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
       interval: 15s
