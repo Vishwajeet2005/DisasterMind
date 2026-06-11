@@ -33,7 +33,12 @@ const App = () => {
         region_name: region.name,
         lat: region.lat,
         lon: region.lon,
-        bbox: region.bbox
+        bbox: {
+          lat_min: region.bbox[0],
+          lon_min: region.bbox[1],
+          lat_max: region.bbox[2],
+          lon_max: region.bbox[3]
+        }
       };
 
       const response = await fetch(`http://localhost:8000/analyze`, {

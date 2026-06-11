@@ -8,7 +8,7 @@ const ReportPanel = ({ report, loading, error }) => {
       const response = await fetch('http://localhost:8000/report/pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(report)
+        body: JSON.stringify({ analysis: report })
       });
       if (!response.ok) throw new Error("Failed to generate PDF");
       const blob = await response.blob();
