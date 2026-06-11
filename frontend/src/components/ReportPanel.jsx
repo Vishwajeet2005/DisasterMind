@@ -28,59 +28,25 @@ const ReportPanel = ({ report, loading, error }) => {
 
   if (loading) {
     return (
-      <div className="glass-panel report-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', position: 'relative', overflow: 'hidden' }}>
-        {/* Cinematic scanning laser effect */}
-        <div style={{
-          position: 'absolute',
-          top: 0, left: 0, right: 0, height: '2px',
-          background: 'linear-gradient(90deg, transparent, var(--text-cyan), transparent)',
-          boxShadow: '0 0 20px var(--text-cyan), 0 0 40px var(--text-cyan)',
-          animation: 'scan-laser 2s ease-in-out infinite alternate',
-          opacity: 0.6
-        }}></div>
-        
-        <div style={{ position: 'relative', marginBottom: 32 }}>
-          {/* Pulsing Core */}
+      <div className="glass-panel report-panel" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+        <div style={{ position: 'relative', marginBottom: 24 }}>
+          {/* Clean minimal spinner */}
           <div style={{ 
-            width: 80, height: 80, 
+            width: 48, height: 48, 
             borderRadius: '50%', 
-            border: '2px dashed rgba(0, 229, 255, 0.3)',
-            borderTopColor: 'var(--text-cyan)',
-            animation: 'spin 3s linear infinite',
-            position: 'absolute',
-            top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)'
+            border: '3px solid rgba(37, 99, 235, 0.1)',
+            borderTopColor: 'var(--accent-primary)',
+            animation: 'spin 1s ease-in-out infinite'
           }}></div>
-          <div style={{ 
-            width: 60, height: 60, 
-            borderRadius: '50%', 
-            border: '2px solid rgba(0, 229, 255, 0.1)',
-            borderBottomColor: 'var(--text-cyan)',
-            animation: 'spin 1.5s linear infinite reverse',
-            position: 'absolute',
-            top: '50%', left: '50%',
-            transform: 'translate(-50%, -50%)'
-          }}></div>
-          <ShieldAlert size={32} color="var(--text-cyan)" style={{ position: 'relative', zIndex: 2 }} />
         </div>
         
-        <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-cyan)', letterSpacing: 4, marginBottom: 12, textShadow: '0 0 10px rgba(0, 229, 255, 0.5)' }}>
-          EXECUTING NEURAL SCAN
+        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
+          Analyzing Telemetry
         </div>
         
-        <div className="mono" style={{ fontSize: 11, color: 'var(--text-secondary)', letterSpacing: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <span>SYNTHESIZING SATELLITE TELEMETRY...</span>
-          <span style={{ opacity: 0.6 }}>RUNNING XGBOOST ENSEMBLE</span>
+        <div style={{ fontSize: 13, color: 'var(--text-secondary)', textAlign: 'center' }}>
+          Processing satellite and meteorological data...
         </div>
-        <style>
-          {`
-            @keyframes scan-laser {
-              0% { top: 0%; opacity: 0.2; }
-              50% { opacity: 0.8; }
-              100% { top: 100%; opacity: 0.2; }
-            }
-          `}
-        </style>
       </div>
     );
   }
@@ -143,11 +109,11 @@ const ReportPanel = ({ report, loading, error }) => {
       {/* ML Validation Strip */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '10px 16px', backgroundColor: 'rgba(0, 229, 255, 0.1)', border: '1px solid rgba(0, 229, 255, 0.3)',
-        color: '#00E5FF', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 700,
-        marginBottom: 24, boxShadow: '0 0 10px rgba(0, 229, 255, 0.1)', textShadow: '0 0 5px rgba(0,229,255,0.5)'
+        padding: '10px 16px', backgroundColor: 'rgba(37, 99, 235, 0.05)', border: '1px solid rgba(37, 99, 235, 0.15)',
+        color: 'var(--accent-primary)', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 700,
+        marginBottom: 24
       }}>
-        {sr?.ml_validated ? <CheckCircle size={16} color="#00E5FF" /> : <AlertTriangle size={16} color="#FF6B00" />}
+        {sr?.ml_validated ? <CheckCircle size={16} color="var(--accent-primary)" /> : <AlertTriangle size={16} color="var(--accent-warning)" />}
         <span>{sr?.ml_validated ? "VALIDATED" : "NOT VALIDATED"} BY XGBOOST & RANDOM FOREST ENSEMBLE</span>
       </div>
 

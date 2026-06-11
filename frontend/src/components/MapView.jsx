@@ -58,9 +58,9 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
       zoomControl={true}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="Tactical Dark (CartoDB)">
+        <LayersControl.BaseLayer checked name="Tactical Light (CartoDB)">
           <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://carto.com/">CARTO</a>'
             maxZoom={20}
           />
