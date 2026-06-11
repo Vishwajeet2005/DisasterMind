@@ -143,6 +143,15 @@
   100% { opacity: 0.8; }
 }
 
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Typography Helpers */
 .mono {
   font-family: var(--font-mono);
