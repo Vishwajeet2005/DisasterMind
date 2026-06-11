@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Rectangle, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Rectangle, useMap, LayersControl } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
@@ -33,21 +33,44 @@ const MapUpdater = ({ center, bbox }) => {
   return null;
 };
 
-const MapView = ({ selectedRegion, onSelectRegion }) => {
+const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
   const center = selectedRegion ? [selectedRegion.lat, selectedRegion.lon] : [20.5937, 78.9629]; // India center
   
+  const getRiskColor = (level) => {
+    switch(level) {
+      case 'CRITICAL': return '#D32F2F';
+      case 'HIGH': return '#F57C00';
+      case 'MODERATE': return '#FBC02D';
+      case 'LOW': return '#388E3C';
+      default: return '#D32F2F'; // Default to critical marker color
+    }
+  };
+
+  const boxColor = riskLevel ? getRiskColor(riskLevel) : '#D32F2F';
+
   return (
     <MapContainer 
       center={center} 
       zoom={5} 
       className="map-container"
       style={{ height: '100%', width: '100%' }}
-      zoomControl={false}
+      zoomControl={true}
     >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-      />
+      <LayersControl position="topright">
+        <LayersControl.BaseLayer checked name="OpenStreetMap (Standard)">
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+        </LayersControl.BaseLayer>
+        
+        <LayersControl.BaseLayer name="Satellite Imagery">
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          />
+        </LayersControl.BaseLayer>
+      </LayersControl>
       
       <MapUpdater center={center} bbox={selectedRegion?.bbox} />
 
@@ -68,7 +91,7 @@ const MapView = ({ selectedRegion, onSelectRegion }) => {
             [selectedRegion.bbox[0], selectedRegion.bbox[1]],
             [selectedRegion.bbox[2], selectedRegion.bbox[3]]
           ]}
-          pathOptions={{ color: '#00BCD4', weight: 1, fillOpacity: 0.3 }}
+          pathOptions={{ color: boxColor, weight: 2, fillOpacity: 0.15 }}
         />
       )}
     </MapContainer>
