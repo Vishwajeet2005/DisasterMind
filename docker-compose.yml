@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - .env.example
+      - backend/.env
     volumes:
       - ./backend/demo_cache:/app/backend/demo_cache
       - ./backend/ml_layer:/app/backend/ml_layer
