@@ -1,0 +1,8 @@
+{
+  "short_name": "DisasterMind",
+  "name": "DisasterMind — Autonomous Disaster Response Intelligence",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0F1923",
+  "background_color": "#F8F9FA"
+}
