@@ -109,7 +109,7 @@ def get_road_accessibility(lat_min: float, lon_min: float, lat_max: float, lon_m
         way["highway"~"primary|secondary|tertiary|trunk"]({lat_min},{lon_min},{lat_max},{lon_max});
         out count;
         """
-        response = requests.get(url, params={'data': query}, timeout=30)
+        response = requests.post(url, data=query, timeout=30)
         response.raise_for_status()
         data = response.json()
         
