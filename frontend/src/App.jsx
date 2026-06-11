@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, ShieldAlert, Cpu, AlertTriangle, ThermometerSun, CloudRain, Users, Truck } from 'lucide-react';
+import { Activity, ShieldAlert, Cpu, AlertTriangle, ThermometerSun, CloudRain, Truck, Crosshair } from 'lucide-react';
 import MapView from './components/MapView';
+import SearchBar from './components/SearchBar';
+import ReportPanel from './components/ReportPanel';
+import ProgressStepper from './components/ProgressStepper';
 import './styles/tokens.css';
 import './App.css';
-
-import ReportPanel from './components/ReportPanel';
 
 const App = () => {
   const [selectedRegion, setSelectedRegion] = useState(null);
@@ -20,26 +21,43 @@ const App = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSelectRegion = async (region) => {
+  const handleSelectRegion = (region) => {
+    // When a user selects a region (either preset or via search), we don't automatically run. We wait for user command.
     setSelectedRegion(region);
+    setReport(null);
+    setError(null);
+  };
+
+  const handleRunAnalysis = async () => {
+    if (!selectedRegion) return;
+    
     setLoading(true);
     setError(null);
     setReport(null);
     
     try {
-      const response = await fetch(`http://localhost:8000/demo/${region.id}`);
+      const payload = {
+        region_name: selectedRegion.name,
+        lat: selectedRegion.lat,
+        lon: selectedRegion.lon,
+        bbox: selectedRegion.bbox
+      };
+
+      const response = await fetch(`http://localhost:8000/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
       if (!response.ok) {
-        throw new Error("Demo cache not found or API unavailable");
+        throw new Error(`API Error: ${response.statusText}`);
       }
+      
       const data = await response.json();
-      
-      setTimeout(() => {
-        setReport(data);
-        setLoading(false);
-      }, 1000);
-      
+      setReport(data);
     } catch (err) {
       setError(err.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -73,7 +91,7 @@ const App = () => {
     if (!report) {
       return (
         <div className="surface-panel dashboard-panel">
-          <div className="empty-state">Awaiting regional selection</div>
+          <div className="empty-state">Awaiting region target and analysis execution</div>
         </div>
       );
     }
@@ -82,6 +100,7 @@ const App = () => {
     const precip = raw_data?.weather?.daily?.precipitation_sum?.[0] || 0;
     const roadCount = raw_data?.roads?.total_count || 0;
     const floodProb = (ml_prediction?.flood_probability * 100).toFixed(1) || 0;
+    const severity = (ml_prediction?.severity_score * 10).toFixed(1) || 0;
 
     return (
       <div className="surface-panel dashboard-panel">
@@ -89,19 +108,29 @@ const App = () => {
         <div className="metric-grid">
           <div className="metric-card">
             <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CloudRain size={12}/> Precipitation</div>
-            <div className="metric-value">{precip} mm</div>
+            <div className="metric-value">{precip} <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>mm/day</span></div>
+            <div style={{ height: 4, width: '100%', backgroundColor: '#E2E8F0', marginTop: 8, borderRadius: 2 }}>
+              <div style={{ height: '100%', width: `${Math.min(precip, 100)}%`, backgroundColor: precip > 50 ? 'var(--color-critical)' : '#3B82F6', borderRadius: 2 }}></div>
+            </div>
           </div>
           <div className="metric-card">
-            <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Cpu size={12}/> ML Flood Prob</div>
+            <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Cpu size={12}/> ML Flood Risk</div>
             <div className="metric-value" style={{ color: floodProb > 50 ? 'var(--color-critical)' : 'var(--color-low)'}}>{floodProb}%</div>
+            <div style={{ height: 4, width: '100%', backgroundColor: '#E2E8F0', marginTop: 8, borderRadius: 2 }}>
+              <div style={{ height: '100%', width: `${floodProb}%`, backgroundColor: floodProb > 50 ? 'var(--color-critical)' : 'var(--color-low)', borderRadius: 2 }}></div>
+            </div>
           </div>
           <div className="metric-card">
-            <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><ThermometerSun size={12}/> Avg Elevation</div>
-            <div className="metric-value">{raw_data?.elevation?.avg?.toFixed(0) || '--'} m</div>
+            <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><AlertTriangle size={12}/> Threat Severity</div>
+            <div className="metric-value">{severity} <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>/ 10</span></div>
+            <div style={{ height: 4, width: '100%', backgroundColor: '#E2E8F0', marginTop: 8, borderRadius: 2 }}>
+              <div style={{ height: '100%', width: `${severity * 10}%`, backgroundColor: severity > 7 ? 'var(--color-critical)' : 'var(--color-moderate)', borderRadius: 2 }}></div>
+            </div>
           </div>
           <div className="metric-card">
-            <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Truck size={12}/> Major Roads</div>
+            <div className="metric-label" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Truck size={12}/> Usable Roads</div>
             <div className="metric-value">{roadCount}</div>
+            <div style={{ fontSize: 10, marginTop: 4, color: 'var(--text-secondary)' }}>{raw_data?.roads?.accessibility || 'UNKNOWN'} ACCESSIBILITY</div>
           </div>
         </div>
       </div>
@@ -118,24 +147,47 @@ const App = () => {
         <div className="topbar-status">
           <span>{currentTime}</span>
           <div className="status-indicator">
-            <div className="dot"></div>
-            <span>SYSTEM_NOMINAL</span>
+            <div className="dot" style={{ backgroundColor: loading ? 'var(--color-moderate)' : 'var(--color-low)', boxShadow: `0 0 8px ${loading ? 'var(--color-moderate)' : 'var(--color-low)'}`}}></div>
+            <span>{loading ? 'SYSTEM_PROCESSING' : 'SYSTEM_NOMINAL'}</span>
           </div>
         </div>
       </div>
 
       <div className="main-content">
-        <div className="panel-left surface-panel" style={{ padding: 0 }}>
+        <div className="panel-left surface-panel" style={{ padding: 0, position: 'relative' }}>
+          <SearchBar onSearch={handleSelectRegion} />
           <MapView 
             selectedRegion={selectedRegion} 
             onSelectRegion={handleSelectRegion} 
             riskLevel={report?.situation_report?.risk_level} 
           />
+          {selectedRegion && !report && !loading && !error && (
+             <div style={{
+                position: 'absolute',
+                bottom: 30,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: 1000
+             }}>
+               <button 
+                 onClick={handleRunAnalysis}
+                 style={{
+                   display: 'flex', alignItems: 'center', gap: 12,
+                   padding: '16px 32px', backgroundColor: 'var(--color-critical)',
+                   color: 'white', border: 'none', borderRadius: 4,
+                   fontSize: 16, fontWeight: 700, letterSpacing: 1.5,
+                   cursor: 'pointer', boxShadow: '0 8px 16px rgba(211, 47, 47, 0.4)'
+                 }}
+               >
+                 <Crosshair size={20} /> INITIATE LIVE THREAT ANALYSIS
+               </button>
+             </div>
+          )}
         </div>
         
         <div className="panel-right">
           {renderDashboardPanel()}
-          <ReportPanel report={report} loading={loading} error={error} />
+          {loading ? <ProgressStepper /> : <ReportPanel report={report} loading={loading} error={error} />}
         </div>
       </div>
     </div>
