@@ -11,7 +11,8 @@ const PRESETS = [
 ];
 
 const pulsingIcon = new L.DivIcon({
-  className: 'custom-pulsing-icon',
+  className: 'custom-pulsing-icon-container',
+  html: '<div class="custom-pulsing-icon"></div>',
   iconSize: [24, 24],
   iconAnchor: [12, 12]
 });
