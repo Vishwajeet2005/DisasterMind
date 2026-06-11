@@ -103,11 +103,11 @@ const ReportPanel = ({ report, loading, error }) => {
       {/* ML Validation Strip */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        padding: '8px 12px', backgroundColor: '#EFF6FF', border: '1px solid #BFDBFE',
-        color: '#1E3A8A', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 500,
-        marginBottom: 20
+        padding: '10px 16px', backgroundColor: 'rgba(0, 229, 255, 0.1)', border: '1px solid rgba(0, 229, 255, 0.3)',
+        color: '#00E5FF', borderRadius: 'var(--radius-sm)', fontSize: 12, fontWeight: 700,
+        marginBottom: 24, boxShadow: '0 0 10px rgba(0, 229, 255, 0.1)', textShadow: '0 0 5px rgba(0,229,255,0.5)'
       }}>
-        {sr?.ml_validated ? <CheckCircle size={14} color="#2563EB" /> : <AlertTriangle size={14} color="#B45309" />}
+        {sr?.ml_validated ? <CheckCircle size={16} color="#00E5FF" /> : <AlertTriangle size={16} color="#FF6B00" />}
         <span>{sr?.ml_validated ? "VALIDATED" : "NOT VALIDATED"} BY XGBOOST & RANDOM FOREST ENSEMBLE</span>
       </div>
 

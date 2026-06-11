@@ -67,20 +67,22 @@ const SearchBar = ({ onSearch }) => {
         onSubmit={handleSearch}
         style={{
           display: 'flex',
-          backgroundColor: 'var(--bg-surface)',
-          border: '2px solid var(--color-critical)',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
-          borderRadius: 2
+          backgroundColor: 'rgba(10, 15, 30, 0.8)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid var(--color-critical)',
+          boxShadow: '0 0 15px rgba(255, 0, 60, 0.3)',
+          borderRadius: 'var(--radius-md)',
+          overflow: 'hidden'
         }}
       >
         <div style={{
-          padding: '8px 12px',
+          padding: '12px 16px',
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: 'var(--bg-sidebar)',
-          color: 'var(--text-inverse)'
+          backgroundColor: 'rgba(255, 0, 60, 0.1)',
+          color: 'var(--color-critical)'
         }}>
-          <MapPin size={16} />
+          <MapPin size={18} />
         </div>
         <input 
           type="text" 
@@ -89,32 +91,34 @@ const SearchBar = ({ onSearch }) => {
           placeholder="ENTER TARGET COORDINATES OR REGION..."
           style={{
             flex: 1,
-            padding: '10px 12px',
+            padding: '12px 16px',
             border: 'none',
             outline: 'none',
-            backgroundColor: 'var(--bg-surface)',
-            color: 'var(--text-primary)',
+            backgroundColor: 'transparent',
+            color: '#FFFFFF',
             fontFamily: 'var(--font-mono)',
-            fontSize: 12,
+            fontSize: 13,
             fontWeight: 600,
-            letterSpacing: 0.5
+            letterSpacing: 1,
+            textShadow: '0 0 5px rgba(255,255,255,0.3)'
           }}
         />
         <button 
           type="submit" 
           disabled={isSearching}
           style={{
-            padding: '0 16px',
+            padding: '0 20px',
             backgroundColor: 'var(--color-critical)',
             color: 'white',
             border: 'none',
             cursor: isSearching ? 'wait' : 'pointer',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            transition: 'background-color 0.2s ease'
           }}
         >
-          {isSearching ? <Loader size={16} className="spin" /> : <Search size={16} />}
+          {isSearching ? <Loader size={18} className="spin" /> : <Search size={18} />}
         </button>
       </form>
       {error && (
