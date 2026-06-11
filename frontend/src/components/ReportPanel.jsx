@@ -141,6 +141,22 @@ const ReportPanel = ({ report, loading, error }) => {
         </div>
       )}
 
+      {report?.satellite_thumbnail && (
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Satellite Intelligence (Earth Engine)</div>
+          <div style={{ 
+            border: 'var(--border-subtle)', borderRadius: 'var(--radius-md)', overflow: 'hidden',
+            backgroundColor: 'var(--bg-primary)', padding: 4
+          }}>
+            <img 
+              src={report.satellite_thumbnail} 
+              alt="Google Earth Engine Thumbnail" 
+              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 'var(--radius-sm)' }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Clean data tables for Resources and Timeline */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Action Timeline (48HRS)</div>
