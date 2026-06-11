@@ -58,17 +58,33 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
       zoomControl={true}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="OpenStreetMap (Standard)">
+        <LayersControl.BaseLayer checked name="Google Streets (Live View)">
+          <TileLayer
+            url="https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}"
+            attribution='&copy; Google Maps'
+            maxZoom={20}
+          />
+        </LayersControl.BaseLayer>
+
+        <LayersControl.BaseLayer name="Google Hybrid (Satellite + Streets)">
+          <TileLayer
+            url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+            attribution='&copy; Google Maps'
+            maxZoom={20}
+          />
+        </LayersControl.BaseLayer>
+
+        <LayersControl.BaseLayer name="OpenStreetMap (Standard)">
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; OpenStreetMap contributors'
           />
         </LayersControl.BaseLayer>
         
-        <LayersControl.BaseLayer name="Satellite Imagery">
+        <LayersControl.BaseLayer name="Esri World Imagery">
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            attribution='Tiles &copy; Esri'
           />
         </LayersControl.BaseLayer>
       </LayersControl>
