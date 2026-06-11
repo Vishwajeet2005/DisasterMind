@@ -126,7 +126,11 @@ const App = () => {
 
       <div className="main-content">
         <div className="panel-left surface-panel" style={{ padding: 0 }}>
-          <MapView selectedRegion={selectedRegion} onSelectRegion={handleSelectRegion} />
+          <MapView 
+            selectedRegion={selectedRegion} 
+            onSelectRegion={handleSelectRegion} 
+            riskLevel={report?.situation_report?.risk_level} 
+          />
         </div>
         
         <div className="panel-right">
