@@ -28,7 +28,7 @@ const ProgressStepper = () => {
   }, []);
 
   return (
-    <div className="surface-panel report-panel" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+    <div className="glass-panel report-panel" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--color-critical)', marginBottom: 32 }}>
         <Activity size={24} className="spin" style={{ animationDuration: '2s' }} />
         <span className="mono" style={{ fontSize: 18, fontWeight: 700, letterSpacing: 2 }}>EXECUTING LIVE THREAT ANALYSIS</span>

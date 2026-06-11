@@ -28,7 +28,7 @@ const ReportPanel = ({ report, loading, error }) => {
 
   if (loading) {
     return (
-      <div className="surface-panel report-panel">
+      <div className="glass-panel report-panel">
         <div className="panel-header"><ShieldAlert size={16} /> Tactical Intelligence Report</div>
         {/* Risk Badge Skeleton */}
         <div className="skeleton" style={{ height: 72, width: '100%', borderRadius: 'var(--radius-md)', marginBottom: 16 }}></div>
@@ -47,7 +47,7 @@ const ReportPanel = ({ report, loading, error }) => {
 
   if (error || !report) {
     return (
-      <div className="surface-panel report-panel">
+      <div className="glass-panel report-panel">
         <div className="empty-state">No active analysis generated.</div>
       </div>
     );
@@ -59,7 +59,7 @@ const ReportPanel = ({ report, loading, error }) => {
   const riskBorderVar = `var(--border-${sr?.risk_level?.toLowerCase() || 'low'})`;
 
   return (
-    <div className="surface-panel report-panel" style={{ position: 'relative' }}>
+    <div className="glass-panel report-panel" style={{ position: 'relative' }}>
       <div className="panel-header" style={{ justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <ShieldAlert size={16} /> Tactical Intelligence Report

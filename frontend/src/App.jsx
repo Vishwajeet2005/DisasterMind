@@ -65,7 +65,7 @@ const App = () => {
   const renderDashboardPanel = () => {
     if (loading) {
       return (
-        <div className="surface-panel dashboard-panel">
+        <div className="glass-panel dashboard-panel">
           <div className="panel-header"><Activity size={16} /> Live Telemetry</div>
           <div className="metric-grid">
             <div className="skeleton skeleton-box"></div>
@@ -79,7 +79,7 @@ const App = () => {
     
     if (error) {
       return (
-        <div className="surface-panel dashboard-panel">
+        <div className="glass-panel dashboard-panel">
           <div className="error-state">
             <AlertTriangle size={32} style={{ marginBottom: 16 }} />
             <div>System Error: {error}</div>
@@ -90,7 +90,7 @@ const App = () => {
 
     if (!report) {
       return (
-        <div className="surface-panel dashboard-panel">
+        <div className="glass-panel dashboard-panel">
           <div className="empty-state">Awaiting region target and analysis execution</div>
         </div>
       );
@@ -103,7 +103,7 @@ const App = () => {
     const severity = (ml_prediction?.severity_score * 10).toFixed(1) || 0;
 
     return (
-      <div className="surface-panel dashboard-panel">
+      <div className="glass-panel dashboard-panel">
         <div className="panel-header"><Activity size={16} /> Live Telemetry: {selectedRegion?.name}</div>
         <div className="metric-grid">
           <div className="metric-card">
@@ -139,72 +139,52 @@ const App = () => {
 
   return (
     <div className="app-container">
-      <div className="topbar">
-        <div className="topbar-brand">
-          <Activity className="brand-icon" size={20} />
-          <span>DISASTERMIND</span>
-        </div>
-        <div className="topbar-status">
-          <span>{currentTime}</span>
-          <div className="status-indicator">
-            <div className="dot" style={{ backgroundColor: loading ? 'var(--color-moderate)' : 'var(--color-low)', boxShadow: `0 0 8px ${loading ? 'var(--color-moderate)' : 'var(--color-low)'}`}}></div>
-            <span>{loading ? 'SYSTEM_PROCESSING' : 'SYSTEM_NOMINAL'}</span>
-          </div>
-        </div>
+      {/* Immersive Map Background Layer */}
+      <div className="map-background">
+        <MapView 
+          selectedRegion={selectedRegion} 
+          onSelectRegion={handleSelectRegion} 
+          riskLevel={report?.situation_report?.risk_level} 
+        />
       </div>
 
-      <div className="main-content">
-        <div className="panel-left surface-panel" style={{ padding: 0, position: 'relative' }}>
-          <SearchBar onSearch={handleSelectRegion} />
-          <MapView 
-            selectedRegion={selectedRegion} 
-            onSelectRegion={handleSelectRegion} 
-            riskLevel={report?.situation_report?.risk_level} 
-          />
-          {selectedRegion && !report && !loading && !error && (
-             <div style={{
-                position: 'absolute',
-                bottom: 30,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 1000
-             }}>
-               <button 
-                 onClick={handleRunAnalysis}
-                 style={{
-                   display: 'flex', alignItems: 'center', gap: 12,
-                   padding: '16px 32px', 
-                   backgroundColor: 'rgba(255, 0, 60, 0.1)',
-                   backdropFilter: 'blur(8px)',
-                   color: '#FF003C', 
-                   border: '1px solid rgba(255, 0, 60, 0.5)', 
-                   borderRadius: 'var(--radius-md)',
-                   fontSize: 14, fontWeight: 700, letterSpacing: 2,
-                   cursor: 'pointer', 
-                   boxShadow: '0 0 20px rgba(255, 0, 60, 0.2), inset 0 0 10px rgba(255, 0, 60, 0.1)',
-                   textShadow: '0 0 8px rgba(255, 0, 60, 0.8)',
-                   textTransform: 'uppercase',
-                   transition: 'all 0.3s ease'
-                 }}
-                 onMouseEnter={(e) => {
-                   e.currentTarget.style.backgroundColor = 'rgba(255, 0, 60, 0.25)';
-                   e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 0, 60, 0.4), inset 0 0 15px rgba(255, 0, 60, 0.2)';
-                 }}
-                 onMouseLeave={(e) => {
-                   e.currentTarget.style.backgroundColor = 'rgba(255, 0, 60, 0.1)';
-                   e.currentTarget.style.boxShadow = '0 0 20px rgba(255, 0, 60, 0.2), inset 0 0 10px rgba(255, 0, 60, 0.1)';
-                 }}
-               >
-                 <Crosshair size={20} /> INITIATE LIVE THREAT ANALYSIS
-               </button>
-             </div>
-          )}
-        </div>
+      {/* Floating HUD Layer */}
+      <div className="hud-layer">
         
-        <div className="panel-right">
+        {/* Topbar Command Strip */}
+        <div className="floating-topbar hud-interactive">
+          <div className="topbar-brand">
+            <Activity className="brand-icon" size={18} />
+            <span>DISASTERMIND</span>
+          </div>
+          <div className="topbar-status">
+            <span>{currentTime}</span>
+            <div className="status-indicator">
+              <div className="dot" style={{ backgroundColor: loading ? 'var(--accent-warning)' : 'var(--accent-safe)', boxShadow: `0 0 8px ${loading ? 'var(--accent-warning)' : 'var(--accent-safe)'}`}}></div>
+              <span>{loading ? 'ANALYSIS_ACTIVE' : 'SYSTEM_NOMINAL'}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating Search Pill */}
+        <div className="hud-interactive" style={{ position: 'absolute', top: 24, left: 24, width: 360 }}>
+          <SearchBar onSearch={handleSelectRegion} />
+        </div>
+
+        {/* Floating Right Sidebar */}
+        <div className="floating-sidebar hud-interactive">
           {renderDashboardPanel()}
           {loading ? <ProgressStepper /> : <ReportPanel report={report} loading={loading} error={error} />}
         </div>
+
+        {/* Floating Action Button */}
+        {selectedRegion && !report && !loading && !error && (
+           <div className="floating-action-area hud-interactive">
+             <button onClick={handleRunAnalysis} className="primary-action-btn">
+               <Crosshair size={18} /> INITIATE LIVE THREAT ANALYSIS
+             </button>
+           </div>
+        )}
       </div>
     </div>
   );
