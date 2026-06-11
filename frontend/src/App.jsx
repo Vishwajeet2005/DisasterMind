@@ -3,7 +3,7 @@ import { Activity, ShieldAlert, Cpu, AlertTriangle, ThermometerSun, CloudRain, T
 import MapView from './components/MapView';
 import SearchBar from './components/SearchBar';
 import ReportPanel from './components/ReportPanel';
-import ProgressStepper from './components/ProgressStepper';
+
 import './styles/tokens.css';
 import './App.css';
 
@@ -21,15 +21,8 @@ const App = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSelectRegion = (region) => {
-    // When a user selects a region (either preset or via search), we don't automatically run. We wait for user command.
-    setSelectedRegion(region);
-    setReport(null);
-    setError(null);
-  };
-
-  const handleRunAnalysis = async () => {
-    if (!selectedRegion) return;
+  const handleRunAnalysis = async (region) => {
+    if (!region) return;
     
     setLoading(true);
     setError(null);
@@ -37,10 +30,10 @@ const App = () => {
     
     try {
       const payload = {
-        region_name: selectedRegion.name,
-        lat: selectedRegion.lat,
-        lon: selectedRegion.lon,
-        bbox: selectedRegion.bbox
+        region_name: region.name,
+        lat: region.lat,
+        lon: region.lon,
+        bbox: region.bbox
       };
 
       const response = await fetch(`http://localhost:8000/analyze`, {
@@ -60,6 +53,11 @@ const App = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSelectRegion = (region) => {
+    setSelectedRegion(region);
+    handleRunAnalysis(region);
   };
 
   const renderDashboardPanel = () => {
@@ -174,17 +172,8 @@ const App = () => {
         {/* Floating Right Sidebar */}
         <div className="floating-sidebar hud-interactive">
           {renderDashboardPanel()}
-          {loading ? <ProgressStepper /> : <ReportPanel report={report} loading={loading} error={error} />}
+          <ReportPanel report={report} loading={loading} error={error} />
         </div>
-
-        {/* Floating Action Button */}
-        {selectedRegion && !report && !loading && !error && (
-           <div className="floating-action-area hud-interactive">
-             <button onClick={handleRunAnalysis} className="primary-action-btn">
-               <Crosshair size={18} /> INITIATE LIVE THREAT ANALYSIS
-             </button>
-           </div>
-        )}
       </div>
     </div>
   );
