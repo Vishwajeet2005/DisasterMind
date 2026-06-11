@@ -5,9 +5,9 @@
 
   /* Deep Oceanic / Obsidian Theme */
   --bg-app: #030712; /* Extreme dark */
-  --bg-glass-heavy: rgba(3, 7, 18, 0.75);
-  --bg-glass-light: rgba(15, 23, 42, 0.45);
-  --bg-glass-highlight: rgba(255, 255, 255, 0.05);
+  --bg-glass-heavy: rgba(15, 23, 42, 0.6); /* More transparent for blur to show */
+  --bg-glass-light: rgba(30, 41, 59, 0.4);
+  --bg-glass-highlight: rgba(255, 255, 255, 0.1);
   
   /* Text Accents */
   --text-primary: #F8FAFC;
@@ -22,8 +22,8 @@
   --accent-info: #0EA5E9;
 
   /* Premium Borders */
-  --border-glass: 1px solid rgba(255, 255, 255, 0.08);
-  --border-glass-strong: 1px solid rgba(255, 255, 255, 0.15);
+  --border-glass: 1px solid rgba(255, 255, 255, 0.12);
+  --border-glass-strong: 1px solid rgba(255, 255, 255, 0.25);
   --border-cyan: 1px solid rgba(56, 189, 248, 0.3);
 
   /* Radius */

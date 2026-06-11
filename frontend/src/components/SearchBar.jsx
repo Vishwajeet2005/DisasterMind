@@ -65,22 +65,19 @@ const SearchBar = ({ onSearch }) => {
     }}>
       <form 
         onSubmit={handleSearch}
+        className="glass-panel"
         style={{
           display: 'flex',
-          backgroundColor: 'rgba(10, 15, 30, 0.8)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid var(--color-critical)',
-          boxShadow: '0 0 15px rgba(255, 0, 60, 0.3)',
-          borderRadius: 'var(--radius-md)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          borderRadius: 'var(--radius-pill)',
+          padding: 0
         }}
       >
         <div style={{
           padding: '12px 16px',
           display: 'flex',
           alignItems: 'center',
-          backgroundColor: 'rgba(255, 0, 60, 0.1)',
-          color: 'var(--color-critical)'
+          color: 'var(--text-secondary)'
         }}>
           <MapPin size={18} />
         </div>
@@ -88,19 +85,18 @@ const SearchBar = ({ onSearch }) => {
           type="text" 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="ENTER TARGET COORDINATES OR REGION..."
+          placeholder="ENTER TARGET COORDINATES..."
           style={{
             flex: 1,
-            padding: '12px 16px',
+            padding: '12px 0',
             border: 'none',
             outline: 'none',
             backgroundColor: 'transparent',
-            color: '#FFFFFF',
+            color: 'var(--text-primary)',
             fontFamily: 'var(--font-mono)',
             fontSize: 13,
-            fontWeight: 600,
-            letterSpacing: 1,
-            textShadow: '0 0 5px rgba(255,255,255,0.3)'
+            fontWeight: 400,
+            letterSpacing: 1
           }}
         />
         <button 
@@ -109,25 +105,20 @@ const SearchBar = ({ onSearch }) => {
           style={{
             padding: '0 20px',
             backgroundColor: 'transparent',
-            color: 'var(--color-low)', // Cyan
-            borderLeft: '1px solid rgba(0, 229, 255, 0.3)',
-            borderTop: 'none',
-            borderRight: 'none',
-            borderBottom: 'none',
+            color: 'var(--text-cyan)',
+            border: 'none',
+            borderLeft: 'var(--border-glass)',
             cursor: isSearching ? 'wait' : 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'all 0.2s ease',
-            textShadow: '0 0 8px rgba(0,229,255,0.6)'
+            transition: 'all 0.2s ease'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(0, 229, 255, 0.1)';
-            e.currentTarget.style.boxShadow = 'inset 0 0 10px rgba(0,229,255,0.2)';
+            e.currentTarget.style.backgroundColor = 'var(--bg-glass-highlight)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.boxShadow = 'none';
           }}
         >
           {isSearching ? <Loader size={18} className="spin" /> : <Search size={18} />}
