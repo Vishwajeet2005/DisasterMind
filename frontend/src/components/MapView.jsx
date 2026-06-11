@@ -55,9 +55,10 @@ const MapView = ({ selectedRegion, onSelectRegion, riskLevel }) => {
       zoom={5} 
       className="map-container"
       style={{ height: '100%', width: '100%' }}
-      zoomControl={true}
+      zoomControl={false}
     >
-      <LayersControl position="topright">
+      <ZoomControl position="bottomleft" />
+      <LayersControl position="bottomleft">
         <LayersControl.BaseLayer checked name="Tactical Dark (CartoDB)">
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
