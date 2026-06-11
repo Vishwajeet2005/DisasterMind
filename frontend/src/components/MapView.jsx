@@ -27,9 +27,9 @@ const MapUpdater = ({ center, bbox }) => {
       ];
       map.fitBounds(bounds, { padding: [50, 50] });
     } else if (center) {
-      map.setView(center, 8);
+      map.setView(center, 5); // Using initial zoom level instead of zoomed-in 8 for center view
     }
-  }, [center, bbox, map]);
+  }, [center[0], center[1], bbox ? bbox.join(',') : '', map]);
   return null;
 };
 
