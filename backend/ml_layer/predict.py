@@ -149,16 +149,20 @@ class MLPredictor:
         affected_proxy = population_density * 0.3 * (rainfall / 10.0)
         damage_proxy   = rainfall * elevation / 100.0
 
-        features = np.array(
-            [[float(disaster_type), deaths_proxy, affected_proxy,
-              damage_proxy, float(now.year), float(now.month)]],
-            dtype=np.float32,
-        )
-
         if self._severity_session is not None:
             try:
-                input_name = self._severity_session.get_inputs()[0].name
-                outputs    = self._severity_session.run(None, {input_name: features})
+                # Map inputs exactly as the ONNX schema demands
+                disaster_str = "Flood" if disaster_type == 2 else "Landslide"
+                feed_dict = {
+                    'Disaster_Type': np.array([[disaster_str]], dtype=object),
+                    'Total_Deaths': np.array([[float(deaths_proxy)]], dtype=np.float64),
+                    'Total_Affected': np.array([[float(affected_proxy)]], dtype=np.float64),
+                    'Total_Damage___000_US__': np.array([[float(damage_proxy)]], dtype=np.float64),
+                    'Start_Year': np.array([[now.year]], dtype=np.int64),
+                    'Start_Month': np.array([[float(now.month)]], dtype=np.float64)
+                }
+
+                outputs = self._severity_session.run(None, feed_dict)
                 score = int(outputs[0][0])
                 score = max(0, min(3, score))
                 return {
