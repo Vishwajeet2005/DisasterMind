@@ -5,3 +5,15 @@ node_modules/
 .DS_Store
 demo_cache/*.json
 *.onnx
+
+# SQLite databases — never commit scan history or credentials to public repos
+*.db
+*.db-shm
+*.db-wal
+
+# Local virtual environments
+backend_venv/
+venv/
+venv313/
+dist/
+build/

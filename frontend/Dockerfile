@@ -1,4 +1,5 @@
-FROM node:20-alpine
+# Stage 1: Build the React Application
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
@@ -8,11 +9,24 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy source code
+# Copy source code and build
 COPY . .
+RUN npm run build
 
-# Expose Vite dev port
-EXPOSE 3000
+# Stage 2: Serve with Nginx
+FROM nginx:alpine
 
-# Start the application
-CMD ["npm", "start"]
+# Remove default nginx static assets
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy built assets from builder
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

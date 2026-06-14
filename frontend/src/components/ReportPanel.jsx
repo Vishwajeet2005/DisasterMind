@@ -1,11 +1,12 @@
 import React from 'react';
 import { ShieldAlert, Download, FileText, AlertTriangle, CheckCircle } from 'lucide-react';
+import API_CONFIG from '../api';
 
 const ReportPanel = ({ report, loading, error }) => {
   const handleDownloadPDF = async () => {
     if (!report) return;
     try {
-      const response = await fetch('http://localhost:8000/report/pdf', {
+      const response = await fetch(`${API_CONFIG}/report/pdf`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ analysis: report })
@@ -65,12 +66,13 @@ const ReportPanel = ({ report, loading, error }) => {
   const riskBorderVar = `var(--border-${sr?.risk_level?.toLowerCase() || 'low'})`;
 
   return (
-    <div className="glass-panel report-panel" style={{ position: 'relative' }}>
+    <article className="glass-panel report-panel" aria-label="Tactical Intelligence Report" style={{ position: 'relative' }}>
       <div className="panel-header" style={{ justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <ShieldAlert size={16} /> Tactical Intelligence Report
         </div>
         <button 
+          aria-label="Export Situation Report to PDF"
           onClick={handleDownloadPDF}
           style={{
             display: 'flex', alignItems: 'center', gap: 6,
@@ -119,14 +121,14 @@ const ReportPanel = ({ report, loading, error }) => {
 
       {/* Summary */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Situation Summary</div>
+        <h2 style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Situation Summary</h2>
         <div style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text-primary)' }}>{sr?.situation_summary}</div>
       </div>
       
       {/* Priority Zones mapped to cards with specific urgency pill colors */}
       {sr?.priority_zones?.length > 0 && (
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Priority Rescue Zones</div>
+          <h2 style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Priority Rescue Zones</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {sr.priority_zones.map((z, i) => (
               <div key={i} style={{ 
@@ -134,7 +136,7 @@ const ReportPanel = ({ report, loading, error }) => {
                 backgroundColor: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', gap: 6
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>{z.zone_name}</span>
+                  <h3 style={{ margin: 0, fontSize: 14, fontWeight: 600 }}>{z.name}</h3>
                   <span style={{ 
                     fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 12,
                     backgroundColor: 'var(--bg-critical)', color: 'var(--color-critical)'
@@ -147,25 +149,32 @@ const ReportPanel = ({ report, loading, error }) => {
         </div>
       )}
 
-      {report?.satellite_thumbnail && (
+      {report?.satellite_thumbnail && (typeof report.satellite_thumbnail === 'string' || report.satellite_thumbnail.true_color) && (
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Satellite Intelligence (Earth Engine)</div>
+          <h2 style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Satellite Intelligence (Earth Engine)</h2>
           <div style={{ 
             border: 'var(--border-subtle)', borderRadius: 'var(--radius-md)', overflow: 'hidden',
-            backgroundColor: 'var(--bg-primary)', padding: 4
+            backgroundColor: 'var(--bg-primary)', padding: 4, display: 'flex', gap: 4
           }}>
             <img 
-              src={report.satellite_thumbnail} 
-              alt="Google Earth Engine Thumbnail" 
-              style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 'var(--radius-sm)' }}
+              src={typeof report.satellite_thumbnail === 'string' ? report.satellite_thumbnail : report.satellite_thumbnail.true_color} 
+              alt="Google Earth Engine True Color" 
+              style={{ width: typeof report.satellite_thumbnail === 'object' && report.satellite_thumbnail.false_color ? '50%' : '100%', height: 'auto', display: 'block', borderRadius: 'var(--radius-sm)' }}
             />
+            {typeof report.satellite_thumbnail === 'object' && report.satellite_thumbnail.false_color && (
+              <img 
+                src={report.satellite_thumbnail.false_color} 
+                alt="Google Earth Engine False Color (SAR/NIR)" 
+                style={{ width: '50%', height: 'auto', display: 'block', borderRadius: 'var(--radius-sm)' }}
+              />
+            )}
           </div>
         </div>
       )}
 
       {/* Clean data tables for Resources and Timeline */}
-      <div style={{ marginBottom: 24 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Action Timeline (48HRS)</div>
+      <section style={{ marginBottom: 24 }}>
+        <h2 style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Action Timeline (24h)</h2>
         <div style={{ border: 'var(--border-subtle)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
           {sr?.action_timeline?.map((act, i) => (
             <div key={i} style={{ 
@@ -173,23 +182,24 @@ const ReportPanel = ({ report, loading, error }) => {
               borderBottom: i !== sr.action_timeline.length - 1 ? 'var(--border-subtle)' : 'none',
               alignItems: 'flex-start', gap: 16
             }}>
-              <div className="mono" style={{ width: 70, fontSize: 12, fontWeight: 600, color: 'var(--color-high)' }}>{act.timeframe}</div>
+              <div className="mono" style={{ width: 70, fontSize: 12, fontWeight: 600, color: 'var(--color-high)' }}>{act.hour}</div>
               <div style={{ flex: 1, fontSize: 13, lineHeight: 1.5 }}>{act.action}</div>
             </div>
           ))}
         </div>
-      </div>
+        </section>
       
-      {sr?.resources_required?.length > 0 && (
+      {sr?.resources_required && Object.keys(sr.resources_required).length > 0 && (
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Required Resources</div>
+          <h2 style={{ margin: 0, fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 8, textTransform: 'uppercase' }}>Required Resources</h2>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {sr.resources_required.map((res, i) => (
+            {Object.entries(sr.resources_required).map(([res, count], i) => (
               <div key={i} style={{ 
                 padding: '6px 12px', border: 'var(--border-subtle)', borderRadius: 'var(--radius-sm)',
-                backgroundColor: 'var(--bg-primary)', fontSize: 12, fontWeight: 500, color: 'var(--text-primary)'
+                backgroundColor: 'var(--bg-primary)', fontSize: 12, fontWeight: 500, color: 'var(--text-primary)',
+                textTransform: 'capitalize'
               }}>
-                {res}
+                {res.replace('_', ' ')}: {count}
               </div>
             ))}
           </div>
@@ -199,7 +209,7 @@ const ReportPanel = ({ report, loading, error }) => {
       <div style={{ marginTop: 16, fontSize: 11, color: 'var(--text-inverse-secondary)', display: 'flex', alignItems: 'center', gap: 4 }}>
         <FileText size={12}/> Automatically generated by DisasterMind Autonomous Engine.
       </div>
-    </div>
+    </article>
   );
 };
 

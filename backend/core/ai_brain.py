@@ -31,7 +31,7 @@ _FALLBACK_REPORT = {
     "risk_score":                  7,
     "ml_validated":                True,
     "primary_threat":              "flood",
-    "estimated_affected_population": "50,000 – 100,000",
+    "estimated_affected_population": "50,000 - 100,000",
     "priority_zones": [
         {
             "zone_id":  1,
@@ -74,7 +74,7 @@ class AIBrain:
 
     def __init__(self):
         if not _GROQ_API_KEY:
-            print("[AIBrain] GROQ_API_KEY not set — will use fallback responses")
+            print("[AIBrain] GROQ_API_KEY not set - will use fallback responses")
             self._client = None
         else:
             self._client = Groq(api_key=_GROQ_API_KEY)
@@ -83,11 +83,12 @@ class AIBrain:
     def analyze_disaster(
         self,
         region_name:   str,
-        firms_data:    str,
+        hotspot_count: int,
         weather_data:  dict,
         elevation_data: dict,
         road_count:    int,
         ml_prediction: dict,
+        sar_flood:     dict = None,
     ) -> dict:
         """
         Build ML-augmented prompt and call Groq 70b.
@@ -103,14 +104,13 @@ class AIBrain:
         rainfall    = weather_data.get("precipitation", [0, 0, 0])
         wind        = weather_data.get("wind_speed",    [0, 0, 0])
         avg_elev    = elevation_data.get("avg_elevation",  200)
-        flood_risk  = elevation_data.get("flood_risk",     "UNKNOWN")
-        slide_risk  = elevation_data.get("landslide_risk", "UNKNOWN")
-
-        from data_fetcher import parse_hotspot_count
-        hotspot_count = parse_hotspot_count(firms_data)
+        max_slope   = elevation_data.get("max_slope", 15.0)
+        flood_ratio = (sar_flood or {}).get("recent_flood_ratio", 0.0)
 
         flood_prob    = ml_prediction.get("flood_probability", 0.0)
         flood_tier    = ml_prediction.get("flood_risk",        "UNKNOWN")
+        landslide_prob= ml_prediction.get("landslide_probability", 0.0)
+        landslide_tier= ml_prediction.get("landslide_risk", "UNKNOWN")
         severity_lbl  = ml_prediction.get("severity_label",   "UNKNOWN")
         ml_confidence = ml_prediction.get("ml_confidence",    "MEDIUM")
 
@@ -119,25 +119,24 @@ You have been given real-time multi-source sensor data AND validated ML model pr
 Respond ONLY in valid JSON. No explanation, no markdown, no preamble.
 
 === ML MODEL PREDICTIONS (trained on historical Indian disaster data) ===
-Flood probability (XGBoost): {flood_prob:.2%}
-Predicted flood risk tier: {flood_tier}
-Predicted severity (Random Forest): {severity_lbl}
+Flood probability (XGBoost Model 1): {flood_prob:.2%} -> {flood_tier}
+Landslide probability (XGBoost Model 2): {landslide_prob:.2%} -> {landslide_tier}
+Predicted severity (Random Forest Model): {severity_lbl}
 ML confidence level: {ml_confidence}
 
 === LIVE SATELLITE & SENSOR DATA ===
 NASA FIRMS VIIRS (last 72hrs): {hotspot_count} active hotspots
 Rainfall forecast D1/D2/D3: {rainfall[0] if len(rainfall)>0 else 0}mm / {rainfall[1] if len(rainfall)>1 else 0}mm / {rainfall[2] if len(rainfall)>2 else 0}mm
 Max wind speed: {wind[0] if wind else 0} km/h
-Average elevation: {avg_elev}m
-Terrain flood risk: {flood_risk}
-Terrain landslide risk: {slide_risk}
+Topography: {avg_elev}m avg elevation, max slope {max_slope} deg
+Sentinel-1 SAR Inundation: {flood_ratio:.1%} of region shows active flooding
 Accessible roads: {road_count}
 
 === OUTPUT FORMAT ===
 Return this exact JSON structure:
 {{
   "situation_summary": "3 sentence summary. Sentence 1: what ML models predict. Sentence 2: what live sensor data shows. Sentence 3: most urgent action.",
-  "risk_level": "CRITICAL | HIGH | MODERATE | LOW",
+  "risk_level": "CRITICAL | HIGH | MODERATE | LOW | NONE",
   "risk_score": <1-10>,
   "ml_validated": true,
   "primary_threat": "flood | landslide | fire | cyclone | composite",
@@ -210,7 +209,7 @@ def _parse_json_response(raw: str) -> dict:
                 return json.loads(match.group())
             except json.JSONDecodeError:
                 pass
-        print("[AIBrain] JSON parse failed — using fallback report")
+        print("[AIBrain] JSON parse failed - using fallback report")
         return _FALLBACK_REPORT.copy()
 
 
