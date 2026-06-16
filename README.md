@@ -129,21 +129,21 @@ The repository is divided into a standalone Vite/React frontend and a modular Fa
 
 ```text
 disastermind/
- frontend/                 # React + Vite application
-    src/
-       components/       # UI Components (IndiaMap, LiveReadings, AgentFeed)
-       styles/           # Global CSS variables and Glassmorphism tokens
-       App.jsx           # Main Application Shell
-    package.json
- backend/                  # Python FastAPI + Autonomous Worker
-     api/                  # FastAPI routes, middleware, and Database connection
-     core/                 # Autonomous Logic (Agent, Monitor, Report Generator)
-     services/             # External Integrations (Earth Engine, Telegram, State)
-     models/               # Grid definitions and ML ONNX Engine (`ml_layer/`)
-     scripts/              # Geospatial grid generation and test scripts
-     data/                 # SQLite databases (`disastermind_state.db`)
-     Dockerfile
-     requirements.txt
+├── frontend/                 # React + Vite application
+│   ├── src/
+│   │   ├── components/       # UI Components (IndiaMap, LiveReadings, AgentFeed)
+│   │   ├── styles/           # Global CSS variables and Glassmorphism tokens
+│   │   └── App.jsx           # Main Application Shell
+│   └── package.json
+└── backend/                  # Python FastAPI + Autonomous Worker
+    ├── api/                  # FastAPI routes, middleware, and Database connection
+    ├── core/                 # Autonomous Logic (Agent, Monitor, Report Generator)
+    ├── services/             # External Integrations (Earth Engine, Telegram, State)
+    ├── models/               # Grid definitions and ML ONNX Engine (`ml_layer/`)
+    ├── scripts/              # Geospatial grid generation and test scripts
+    ├── data/                 # SQLite databases (`disastermind_state.db`)
+    ├── Dockerfile
+    └── requirements.txt
 ```
 
 ---
@@ -250,6 +250,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <br/>
   <i>Built to save lives through data-driven autonomy.</i>
 </div>
-
-
-
