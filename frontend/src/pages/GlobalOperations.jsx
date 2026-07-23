@@ -14,6 +14,53 @@ export default function GlobalOperations() {
   const [selectedCell, setSelectedCell] = useState(null);
   const [selectedRisk, setSelectedRisk] = useState(null);
 
+  // Command Palette State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('CRITICAL');
+  const [sectorFilter, setSectorFilter] = useState('ALL');
+  const [assetsFilter, setAssetsFilter] = useState('DEPLOYED');
+  
+  const searchInputRef = React.useRef(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim() !== '') {
+      const found = heatmapData.find(c => c.cell_id.toLowerCase() === searchQuery.trim().toLowerCase());
+      if (found) {
+        handleCellSelect(found, found.risk_level);
+        setSearchQuery('');
+        searchInputRef.current?.blur();
+      } else {
+        alert('Coordinates or Entity ID not found in current grid.');
+      }
+    }
+  };
+
+  const cycleStatus = () => {
+    const cycle = { 'CRITICAL': 'HIGH', 'HIGH': 'ALL', 'ALL': 'CRITICAL' };
+    setStatusFilter(cycle[statusFilter] || 'ALL');
+  };
+
+  const cycleSector = () => {
+    const cycle = { 'ALL': 'NORTH', 'NORTH': 'SOUTH', 'SOUTH': 'ALL' };
+    setSectorFilter(cycle[sectorFilter] || 'ALL');
+  };
+
+  const cycleAssets = () => {
+    const cycle = { 'DEPLOYED': 'STANDBY', 'STANDBY': 'OFFLINE', 'OFFLINE': 'DEPLOYED' };
+    setAssetsFilter(cycle[assetsFilter] || 'DEPLOYED');
+  };
+
   // Fetch static grid once
   useEffect(() => {
     let retries = 0;
@@ -79,7 +126,11 @@ export default function GlobalOperations() {
           <div className="flex items-center border-b border-outline-variant px-4 h-12 bg-surface">
             <Search className="text-on-surface-variant mr-3" size={18} />
             <input 
+              ref={searchInputRef}
               autoFocus 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
               className="bg-transparent border-none w-full text-primary font-data-tabular text-[13px] focus:ring-0 placeholder:text-on-surface-variant outline-none" 
               placeholder="ENTER COORDINATES OR ENTITY ID..." 
               type="text"
@@ -90,15 +141,24 @@ export default function GlobalOperations() {
           </div>
           
           <div className="p-3 bg-surface-container-low flex flex-wrap gap-2">
-            <button className="border border-outline-variant px-3 py-1 font-label-caps text-[11px] text-on-surface hover:bg-surface hover:text-primary flex items-center gap-1 bg-surface-container transition-none">
+            <button 
+              onClick={cycleSector}
+              className={`border px-3 py-1 font-label-caps text-[11px] flex items-center gap-1 transition-none ${sectorFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:bg-surface-bright'}`}
+            >
               <Filter size={14} />
-              SECTOR: ALL
+              SECTOR: {sectorFilter}
             </button>
-            <button className="border border-primary px-3 py-1 font-label-caps text-[11px] bg-primary text-on-primary hover:bg-surface-bright transition-none">
-              STATUS: CRITICAL
+            <button 
+              onClick={cycleStatus}
+              className={`border px-3 py-1 font-label-caps text-[11px] transition-none ${statusFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:bg-surface-bright'}`}
+            >
+              STATUS: {statusFilter}
             </button>
-            <button className="border border-outline-variant px-3 py-1 font-label-caps text-[11px] text-on-surface hover:bg-surface hover:text-primary transition-none">
-              ASSETS: DEPLOYED
+            <button 
+              onClick={cycleAssets}
+              className={`border px-3 py-1 font-label-caps text-[11px] transition-none ${assetsFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:bg-surface-bright'}`}
+            >
+              ASSETS: {assetsFilter}
             </button>
           </div>
         </div>
