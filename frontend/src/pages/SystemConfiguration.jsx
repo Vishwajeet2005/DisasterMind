@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Radar, Warning, Check, AlertTriangle } from 'lucide-react';
+import { Radar, Check, AlertTriangle } from 'lucide-react';
 import API_CONFIG from '../api';
 
 const API_BASE = `${API_CONFIG}/api/monitor`;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, MoreHorizontal, Settings, ListPlus } from 'lucide-react';
-import IndiaMap from './IndiaMap';
+import IndiaMap from '../components/IndiaMap';
 import API_CONFIG from '../api';
 
 const API_BASE = `${API_CONFIG}/api/monitor`;
