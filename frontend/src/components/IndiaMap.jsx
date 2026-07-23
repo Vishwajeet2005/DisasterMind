@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
-import { MapContainer, TileLayer, WMSTileLayer, Rectangle, Tooltip, useMap, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, WMSTileLayer, Rectangle, Tooltip, useMap, LayersControl, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 const RISK_FILLS = {
@@ -49,23 +49,13 @@ export default function IndiaMap({ gridCells, heatmapData, selectedCell, onCellC
 
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative', background: 'var(--bg-map)' }}>
-      <div style={{
-        position: 'absolute', top: 12, left: 16, zIndex: 1000,
-        fontFamily: 'var(--font-mono)', fontSize: 10,
-        color: 'rgba(255,255,255,0.7)', letterSpacing: '0.12em',
-        textTransform: 'uppercase', pointerEvents: 'none',
-        background: 'rgba(15,23,42,0.6)', padding: '4px 8px', borderRadius: 4,
-        border: '1px solid rgba(255,255,255,0.1)'
-      }}>
-        INDIA NATIONAL THREAT GRID | {gridCells?.length || 0} CELLS
-      </div>
-
       <MapContainer 
         center={center} 
         zoom={zoom} 
         style={{ width: '100%', height: '100%', background: 'transparent' }}
-        zoomControl={true}
+        zoomControl={false}
       >
+        <ZoomControl position="bottomright" />
         <LayersControl position="bottomright">
           <LayersControl.BaseLayer checked name="Dark Matter">
             <TileLayer
