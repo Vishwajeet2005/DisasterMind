@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Telemetry Analytics - DISASTER INTEL</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ffb4ab",
+                      "on-background": "#e5e2e1",
+                      "error-container": "#93000a",
+                      "primary-fixed-dim": "#c6c6c7",
+                      "on-secondary-fixed": "#410000",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "surface-container": "#201f1f",
+                      "on-tertiary-fixed-variant": "#474746",
+                      "tertiary-fixed": "#e4e2e1",
+                      "secondary": "#ffb4a8",
+                      "outline-variant": "#444748",
+                      "surface-tint": "#c6c6c7",
+                      "secondary-fixed": "#ffdad4",
+                      "on-secondary-container": "#5c0000",
+                      "on-tertiary-container": "#656464",
+                      "tertiary-container": "#e4e2e1",
+                      "primary": "#ffffff",
+                      "on-primary-container": "#636565",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "on-secondary-fixed-variant": "#930100",
+                      "surface-container-highest": "#353534",
+                      "surface-bright": "#3a3939",
+                      "surface-variant": "#353534",
+                      "on-surface-variant": "#c4c7c8",
+                      "on-surface": "#e5e2e1",
+                      "on-primary-fixed-variant": "#454747",
+                      "surface-dim": "#131313",
+                      "tertiary-fixed-dim": "#c8c6c5",
+                      "inverse-primary": "#5d5f5f",
+                      "secondary-container": "#ff5540",
+                      "on-primary-fixed": "#1a1c1c",
+                      "tertiary": "#ffffff",
+                      "outline": "#8e9192",
+                      "surface-container-low": "#1c1b1b",
+                      "on-primary": "#2f3131",
+                      "primary-fixed": "#e2e2e2",
+                      "inverse-surface": "#e5e2e1",
+                      "on-secondary": "#690100",
+                      "surface": "#131313",
+                      "surface-container-lowest": "#0e0e0e",
+                      "secondary-fixed-dim": "#ffb4a8",
+                      "inverse-on-surface": "#313030",
+                      "surface-container-high": "#2a2a2a",
+                      "primary-container": "#e2e2e2",
+                      "background": "#131313",
+                      "on-tertiary": "#303030"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sidebar-width": "64px",
+                      "data-row-height": "32px",
+                      "gutter": "1px",
+                      "container-margin": "24px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "data-tabular": ["JetBrains Mono"],
+                      "label-caps": ["JetBrains Mono"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "headline-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-lg": ["JetBrains Mono"],
+                      "body-md": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "data-tabular": ["13px", { "lineHeight": "1.2", "letterSpacing": "0em", "fontWeight": "500" }],
+                      "label-caps": ["11px", { "lineHeight": "1", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                      "headline-md": ["24px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                      "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "headline-sm": ["18px", { "lineHeight": "1.4", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                      "headline-lg-mobile": ["24px", { "lineHeight": "1.2", "fontWeight": "700" }],
+                      "body-lg": ["16px", { "lineHeight": "1.6", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                      "body-md": ["14px", { "lineHeight": "1.6", "letterSpacing": "0em", "fontWeight": "400" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Custom utilities for the brutalist aesthetic */
+        .grid-blueprint {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, #262626 1px, transparent 1px),
+                linear-gradient(to bottom, #262626 1px, transparent 1px);
+            background-position: top left;
+        }
+        /* Vertical writing mode for sidebar title if needed */
+        .writing-vertical {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        /* Scrollbar styling for data density */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #444748;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md overflow-x-hidden antialiased">
+<!-- SideNavBar (Generated from JSON) -->
+<nav class="bg-surface dark:bg-surface text-primary dark:text-primary font-body-md text-body-md w-sidebar-width h-screen fixed left-0 top-0 border-r border-outline-variant transition-none flex flex-col items-center py-4 z-50">
+<div class="mb-8 flex flex-col items-center justify-center">
+<div class="w-8 h-8 bg-surface-container-highest border border-outline-variant flex items-center justify-center mb-2">
+<span class="font-label-caps text-label-caps text-on-surface">SC</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface writing-vertical rotate-180 tracking-widest opacity-50 mt-2">STRAT-COM</span>
+</div>
+<div class="flex flex-col gap-4 w-full px-2 mt-4">
+<!-- Global Ops -->
+<a class="group relative flex flex-col items-center justify-center p-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest transition-none" href="#" title="Global Ops">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">public</span>
+</a>
+<!-- Threat Roster -->
+<a class="group relative flex flex-col items-center justify-center p-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest transition-none" href="#" title="Threat Roster">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">gavel</span>
+</a>
+<!-- Telemetry (ACTIVE) -->
+<a class="group relative flex flex-col items-center justify-center p-2 rounded-DEFAULT bg-primary text-on-primary transition-none" href="#" title="Telemetry">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</a>
+<!-- System Config -->
+<a class="group relative flex flex-col items-center justify-center p-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest transition-none" href="#" title="System Config">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+</a>
+</div>
+<div class="mt-auto w-full px-2">
+<!-- Footer: Support -->
+<a class="group relative flex flex-col items-center justify-center p-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest transition-none" href="#" title="Support">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">help_center</span>
+</a>
+<div class="text-center mt-4 w-full">
+<span class="font-data-tabular text-data-tabular text-on-surface-variant text-[10px] block opacity-40">V 4.2.0</span>
+</div>
+</div>
+</nav>
+<!-- TopNavBar (Generated from JSON) -->
+<header class="bg-surface dark:bg-surface text-primary dark:text-primary font-label-caps text-label-caps h-10 fixed top-0 right-0 left-sidebar-width w-[calc(100%-sidebar-width)] border-b border-outline-variant transition-none flex justify-between items-center px-container-margin h-data-row-height z-40">
+<div class="flex items-center gap-4">
+<h1 class="font-headline-sm text-headline-sm font-bold tracking-tighter text-on-surface uppercase">DISASTER INTEL</h1>
+</div>
+<div class="flex items-center h-full">
+<div class="hidden"></div> <!-- search_bar hidden -->
+<div class="flex items-center h-full border-l border-outline-variant pl-4 ml-4 gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container transition-none h-full px-2 flex items-center">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container transition-none h-full px-2 flex items-center">
+<span class="material-symbols-outlined text-[18px]">sensors</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container transition-none h-full px-2 flex items-center">
+<span class="material-symbols-outlined text-[18px]">wifi</span>
+</button>
+<div class="bg-error text-on-error h-full flex items-center px-4 ml-2 border border-error">
+<span class="font-label-caps text-label-caps font-bold">THREAT LEVEL: ALPHA</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-sidebar-width mt-10 min-h-[calc(100vh-40px)] p-container-margin flex flex-col gap-container-margin">
+<!-- Page Header -->
+<div class="flex justify-between items-end border-b border-outline-variant pb-4">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary mb-1">TELEMETRY: 30-DAY TRENDS</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Global probabilistic models and localized atmospheric saturation.</p>
+</div>
+<div class="flex gap-2">
+<button class="bg-surface text-on-surface border border-outline-variant px-4 h-data-row-height font-label-caps text-label-caps flex items-center gap-2 hover:bg-surface-container-highest">
+<span class="material-symbols-outlined text-[16px]">calendar_month</span>
+                    T-30 TO T-0
+                </button>
+<button class="bg-primary text-on-primary border border-primary px-4 h-data-row-height font-label-caps text-label-caps flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">download</span>
+                    EXPORT
+                </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter bg-outline-variant border border-outline-variant">
+<!-- Widget 1: Historical Flood Probabilities (Line Chart) -->
+<div class="col-span-12 xl:col-span-8 bg-background flex flex-col relative h-[400px]">
+<div class="absolute inset-0 grid-blueprint opacity-20 pointer-events-none"></div>
+<div class="flex justify-between items-center p-4 border-b border-outline-variant bg-surface-container-lowest z-10">
+<h3 class="font-label-caps text-label-caps text-on-surface">HISTORICAL FLOOD PROBABILITY (%)</h3>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-0.5 bg-primary"></div>
+<span class="font-data-tabular text-data-tabular text-on-surface-variant text-[11px]">ACTUAL</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-0.5 bg-error"></div>
+<span class="font-data-tabular text-data-tabular text-on-surface-variant text-[11px]">THRESHOLD</span>
+</div>
+</div>
+</div>
+<div class="flex-1 p-4 flex z-10 relative">
+<!-- Y Axis Labels -->
+<div class="flex flex-col justify-between items-end pr-4 border-r border-outline-variant font-data-tabular text-data-tabular text-on-surface-variant text-[11px] h-full pb-6">
+<span>100</span>
+<span>75</span>
+<span>50</span>
+<span>25</span>
+<span>0</span>
+</div>
+<!-- Chart Area -->
+<div class="flex-1 relative w-full h-full pl-4">
+<!-- Simulated SVG Chart -->
+<svg class="w-full h-[calc(100%-24px)] overflow-visible" preserveaspectratio="none" viewbox="0 0 1000 300">
+<!-- Horizontal Grid Lines -->
+<line class="text-outline-variant opacity-50" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="0" y2="0"></line>
+<line class="text-outline-variant opacity-50" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="75" y2="75"></line>
+<line class="text-outline-variant opacity-50" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="150" y2="150"></line>
+<line class="text-outline-variant opacity-50" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="225" y2="225"></line>
+<line class="text-outline-variant opacity-50" stroke="currentColor" stroke-width="1" x1="0" x2="1000" y1="300" y2="300"></line>
+<!-- Threshold Line (80%) -->
+<line class="text-error opacity-70" stroke="currentColor" stroke-dasharray="4 4" stroke-width="1" x1="0" x2="1000" y1="60" y2="60"></line>
+<!-- Data Line -->
+<path class="text-primary" d="M 0 280 L 100 290 L 200 240 L 300 260 L 400 180 L 500 190 L 600 90 L 700 110 L 800 40 L 900 50 L 1000 20" fill="none" stroke="currentColor" stroke-linejoin="miter" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+<!-- Data Points (Critical) -->
+<circle class="text-error" cx="800" cy="40" fill="currentColor" r="4"></circle>
+<circle class="text-error" cx="900" cy="50" fill="currentColor" r="4"></circle>
+<circle class="text-error" cx="1000" cy="20" fill="currentColor" r="4"></circle>
+</svg>
+<!-- X Axis Labels -->
+<div class="absolute bottom-0 left-4 right-0 flex justify-between font-data-tabular text-data-tabular text-on-surface-variant text-[11px] h-6 items-end">
+<span>T-30</span>
+<span>T-24</span>
+<span>T-18</span>
+<span>T-12</span>
+<span>T-06</span>
+<span>T-0</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Widget 2: Rainfall Trends (Bar Graph) -->
+<div class="col-span-12 xl:col-span-4 bg-background flex flex-col h-[400px]">
+<div class="flex justify-between items-center p-4 border-b border-outline-variant bg-surface-container-lowest">
+<h3 class="font-label-caps text-label-caps text-on-surface">RAINFALL VOLUME (MM)</h3>
+</div>
+<div class="flex-1 p-6 flex items-end gap-2 relative">
+<!-- Bars -->
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[10%] relative group cursor-crosshair">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 font-data-tabular text-data-tabular text-[10px] hidden group-hover:block bg-surface px-1 border border-outline-variant">12</div>
+</div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[15%] relative group cursor-crosshair"></div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[12%] relative group cursor-crosshair"></div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[25%] relative group cursor-crosshair"></div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[40%] relative group cursor-crosshair"></div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[35%] relative group cursor-crosshair"></div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[60%] relative group cursor-crosshair"></div>
+<div class="w-full bg-error border border-error h-[85%] relative group cursor-crosshair">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 font-data-tabular text-data-tabular text-[10px] hidden group-hover:block bg-error text-on-error px-1 border border-on-error">142</div>
+</div>
+<div class="w-full bg-error border border-error h-[95%] relative group cursor-crosshair"></div>
+<div class="w-full bg-surface-container border border-outline-variant hover:bg-surface-tint hover:border-primary transition-none h-[50%] relative group cursor-crosshair"></div>
+</div>
+<div class="px-6 py-2 border-t border-outline-variant flex justify-between font-data-tabular text-data-tabular text-on-surface-variant text-[11px]">
+<span>MIN: 12MM</span>
+<span>MAX: 168MM</span>
+</div>
+</div>
+<!-- Widget 3: Data Table (Critical Breaches) -->
+<div class="col-span-12 bg-background flex flex-col">
+<div class="flex justify-between items-center p-4 border-b border-outline-variant bg-surface-container-lowest">
+<h3 class="font-label-caps text-label-caps text-on-surface">CRITICAL TELEMETRY BREACHES</h3>
+<span class="font-data-tabular text-data-tabular text-error text-[11px] border border-error px-2 py-0.5">COUNT: 03</span>
+</div>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-[#1A1A1A] border-b border-outline-variant h-data-row-height">
+<th class="px-4 font-label-caps text-label-caps text-on-surface w-[150px] border-r border-outline-variant">TIMESTAMP</th>
+<th class="px-4 font-label-caps text-label-caps text-on-surface w-[120px] border-r border-outline-variant">NODE ID</th>
+<th class="px-4 font-label-caps text-label-caps text-on-surface border-r border-outline-variant">METRIC</th>
+<th class="px-4 font-label-caps text-label-caps text-on-surface w-[120px] border-r border-outline-variant text-right">VALUE</th>
+<th class="px-4 font-label-caps text-label-caps text-on-surface w-[100px]">STATUS</th>
+</tr>
+</thead>
+<tbody class="font-data-tabular text-data-tabular">
+<tr class="border-b border-outline-variant h-data-row-height hover:bg-surface-container-highest transition-none">
+<td class="px-4 border-r border-outline-variant text-on-surface-variant">T-04:12:00</td>
+<td class="px-4 border-r border-outline-variant text-primary">N-882-A</td>
+<td class="px-4 border-r border-outline-variant text-on-surface">SATURATION_IDX</td>
+<td class="px-4 border-r border-outline-variant text-right">92.4%</td>
+<td class="px-4">
+<span class="bg-error text-on-error px-2 py-0.5 block text-center w-full">CRIT</span>
+</td>
+</tr>
+<tr class="border-b border-outline-variant h-data-row-height hover:bg-surface-container-highest transition-none">
+<td class="px-4 border-r border-outline-variant text-on-surface-variant">T-09:45:30</td>
+<td class="px-4 border-r border-outline-variant text-primary">N-104-B</td>
+<td class="px-4 border-r border-outline-variant text-on-surface">PRECIP_RATE</td>
+<td class="px-4 border-r border-outline-variant text-right">45MM/H</td>
+<td class="px-4">
+<span class="bg-error text-on-error px-2 py-0.5 block text-center w-full">CRIT</span>
+</td>
+</tr>
+<tr class="border-b border-outline-variant h-data-row-height hover:bg-surface-container-highest transition-none">
+<td class="px-4 border-r border-outline-variant text-on-surface-variant">T-18:22:15</td>
+<td class="px-4 border-r border-outline-variant text-primary">N-331-C</td>
+<td class="px-4 border-r border-outline-variant text-on-surface">RIVER_LVL</td>
+<td class="px-4 border-r border-outline-variant text-right">+4.2M</td>
+<td class="px-4">
+<span class="bg-error text-on-error px-2 py-0.5 block text-center w-full">CRIT</span>
+</td>
+</tr>
+<!-- Filler rows to maintain density aesthetic -->
+<tr class="border-b border-outline-variant h-data-row-height hover:bg-surface-container-highest transition-none opacity-50">
+<td class="px-4 border-r border-outline-variant text-on-surface-variant">T-22:10:00</td>
+<td class="px-4 border-r border-outline-variant text-primary">N-882-A</td>
+<td class="px-4 border-r border-outline-variant text-on-surface">SATURATION_IDX</td>
+<td class="px-4 border-r border-outline-variant text-right">78.1%</td>
+<td class="px-4">
+<span class="border border-primary text-primary px-2 py-0.5 block text-center w-full">WARN</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</body></html>
