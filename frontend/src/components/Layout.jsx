@@ -10,9 +10,7 @@ export default function Layout() {
         <div className="flex flex-col items-center w-full gap-8">
           {/* Brand Logo */}
           <div className="w-10 h-10 border border-outline-variant flex items-center justify-center bg-surface-container-highest cursor-help group" title="System Operator">
-            <span className="font-label-caps text-label-caps text-on-surface [writing-mode:vertical-lr] rotate-180 tracking-widest text-[8px] h-full text-center leading-none flex items-center justify-center">
-              STRAT-COM
-            </span>
+            <span className="font-headline-md font-bold text-primary">SC</span>
           </div>
           
           {/* Primary Navigation Tabs */}
@@ -77,30 +75,31 @@ export default function Layout() {
               )}
             </NavLink>
 
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                `w-full aspect-square flex flex-col items-center justify-center border group relative transition-none ${
-                  isActive
-                    ? 'bg-primary text-on-primary border-primary'
-                    : 'text-on-surface-variant hover:bg-surface-container-highest border-transparent hover:border-outline-variant'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Settings size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                  {isActive && (
-                    <div className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-[2px] h-1/2 bg-primary"></div>
-                  )}
-                </>
-              )}
-            </NavLink>
           </div>
         </div>
 
         {/* Footer Navigation */}
-        <div className="flex flex-col w-full px-[2px]">
+        <div className="flex flex-col w-full px-[2px] gap-2">
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `w-full aspect-square flex flex-col items-center justify-center border group relative transition-none ${
+                isActive
+                  ? 'bg-primary text-on-primary border-primary'
+                  : 'text-on-surface-variant hover:bg-surface-container-highest border-transparent hover:border-outline-variant'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Settings size={20} strokeWidth={isActive ? 2.5 : 1.5} />
+                {isActive && (
+                  <div className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-[2px] h-1/2 bg-primary"></div>
+                )}
+              </>
+            )}
+          </NavLink>
+          
           <button aria-label="Support" className="w-full aspect-square flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-highest border border-transparent hover:border-outline-variant transition-none group">
             <HelpCircle size={20} strokeWidth={1.5} />
           </button>
