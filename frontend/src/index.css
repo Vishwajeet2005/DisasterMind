@@ -13,3 +13,32 @@ body, html, #root { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow
       linear-gradient(to bottom, #262626 1px, transparent 1px);
   background-position: top left;
 }
+
+/* Brutalist Checkbox/Toggle Styles */
+.brutal-toggle input { display: none; }
+.brutal-toggle .track {
+    width: 48px;
+    height: 24px;
+    border: 1px solid #444748;
+    background-color: #201f1f;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+}
+.brutal-toggle .thumb {
+    width: 20px;
+    height: 20px;
+    background-color: #444748;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    transition: transform 0.1s steps(2, end);
+}
+.brutal-toggle input:checked + .track {
+    border-color: #ffffff;
+    background-color: #353534;
+}
+.brutal-toggle input:checked + .track .thumb {
+    background-color: #ffffff;
+    transform: translateX(24px);
+}
