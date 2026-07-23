@@ -117,7 +117,8 @@ export default function GlobalOperations() {
           <IndiaMap 
             gridCells={gridCells}
             heatmapData={heatmapData}
-            onCellSelect={handleCellSelect}
+            selectedCell={selectedCell}
+            onCellClick={handleCellSelect}
           />
         </div>
 
