@@ -9,6 +9,7 @@ export default function GlobalOperations() {
   const [gridCells, setGridCells] = useState([]);
   const [heatmapData, setHeatmapData] = useState([]);
   const [agentLog, setAgentLog] = useState([]);
+  const [feedFilter, setFeedFilter] = useState('ALL');
   
   const [selectedCell, setSelectedCell] = useState(null);
   const [selectedRisk, setSelectedRisk] = useState(null);
@@ -131,9 +132,22 @@ export default function GlobalOperations() {
         </header>
 
         <div className="h-8 border-b border-outline-variant flex bg-surface flex-shrink-0">
-          <button className="flex-1 font-label-caps text-[10px] text-on-surface border-r border-outline-variant hover:bg-surface-container-highest transition-none">ALL LOGS</button>
-          <button className="flex-1 font-label-caps text-[10px] text-on-surface-variant border-r border-outline-variant hover:bg-surface-container-highest transition-none">ALERTS ONLY</button>
-          <button className="w-10 flex items-center justify-center hover:bg-surface-container-highest transition-none text-on-surface-variant">
+          <button 
+            onClick={() => setFeedFilter('ALL')}
+            className={`flex-1 font-label-caps text-[10px] border-r border-outline-variant hover:bg-surface-container-highest transition-none ${feedFilter === 'ALL' ? 'text-on-surface bg-surface-container-highest' : 'text-on-surface-variant'}`}
+          >
+            ALL LOGS
+          </button>
+          <button 
+            onClick={() => setFeedFilter('ALERTS')}
+            className={`flex-1 font-label-caps text-[10px] border-r border-outline-variant hover:bg-surface-container-highest transition-none ${feedFilter === 'ALERTS' ? 'text-on-surface bg-surface-container-highest' : 'text-on-surface-variant'}`}
+          >
+            ALERTS ONLY
+          </button>
+          <button 
+            onClick={() => alert("Advanced filtering options would open here.")}
+            className="w-10 flex items-center justify-center hover:bg-surface-container-highest transition-none text-on-surface-variant"
+          >
             <MoreHorizontal size={14} />
           </button>
         </div>
@@ -142,7 +156,9 @@ export default function GlobalOperations() {
           {agentLog.length === 0 ? (
             <div className="text-center font-data-tabular text-[12px] text-on-surface-variant mt-10">No logs available</div>
           ) : (
-            agentLog.map((log) => {
+            agentLog
+              .filter(log => feedFilter === 'ALL' || log.severity === 'ERROR' || log.severity === 'CRITICAL')
+              .map((log) => {
               const time = new Date(log.logged_at).toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC';
               const isError = log.severity === 'ERROR' || log.severity === 'CRITICAL';
               const isWarning = log.severity === 'WARNING';
