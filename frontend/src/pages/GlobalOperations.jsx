@@ -10,6 +10,7 @@ export default function GlobalOperations() {
   const [heatmapData, setHeatmapData] = useState([]);
   const [agentLog, setAgentLog] = useState([]);
   const [feedFilter, setFeedFilter] = useState('ALL');
+  const [showFeedMenu, setShowFeedMenu] = useState(false);
   
   const [selectedCell, setSelectedCell] = useState(null);
   const [selectedRisk, setSelectedRisk] = useState(null);
@@ -192,7 +193,7 @@ export default function GlobalOperations() {
           </div>
         </header>
 
-        <div className="h-8 border-b border-outline-variant flex bg-surface flex-shrink-0">
+        <div className="h-8 border-b border-outline-variant flex bg-surface flex-shrink-0 relative">
           <button 
             onClick={() => setFeedFilter('ALL')}
             className={`flex-1 font-label-caps text-[10px] border-r border-outline-variant hover:bg-surface-container-highest transition-none ${feedFilter === 'ALL' ? 'text-on-surface bg-surface-container-highest' : 'text-on-surface-variant'}`}
@@ -206,11 +207,34 @@ export default function GlobalOperations() {
             ALERTS ONLY
           </button>
           <button 
-            onClick={() => alert("Advanced filtering options would open here.")}
-            className="w-10 flex items-center justify-center hover:bg-surface-container-highest transition-none text-on-surface-variant"
+            onClick={() => setShowFeedMenu(!showFeedMenu)}
+            className={`w-10 flex items-center justify-center transition-none ${showFeedMenu ? 'bg-surface-container-highest text-on-surface' : 'text-on-surface-variant hover:bg-surface-container-highest'}`}
           >
             <MoreHorizontal size={14} />
           </button>
+
+          {showFeedMenu && (
+            <div className="absolute top-8 right-0 w-48 bg-surface-container border border-outline-variant border-t-0 flex flex-col z-50 shadow-none">
+              <button 
+                onClick={() => { setAgentLog([]); setShowFeedMenu(false); }} 
+                className="px-4 py-3 text-left font-label-caps text-[10px] text-on-surface hover:bg-surface-container-highest hover:text-primary transition-none border-b border-outline-variant"
+              >
+                CLEAR FEED
+              </button>
+              <button 
+                onClick={() => { alert('Log export requested'); setShowFeedMenu(false); }} 
+                className="px-4 py-3 text-left font-label-caps text-[10px] text-on-surface hover:bg-surface-container-highest transition-none border-b border-outline-variant"
+              >
+                EXPORT LOGS
+              </button>
+              <button 
+                onClick={() => setShowFeedMenu(false)} 
+                className="px-4 py-3 text-left font-label-caps text-[10px] text-error hover:bg-[#2d1212] transition-none"
+              >
+                MUTE ALERTS
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
