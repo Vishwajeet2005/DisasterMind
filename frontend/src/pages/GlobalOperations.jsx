@@ -214,12 +214,18 @@ export default function GlobalOperations() {
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
-          {agentLog.length === 0 ? (
-            <div className="text-center font-data-tabular text-[12px] text-on-surface-variant mt-10">No logs available</div>
-          ) : (
-            agentLog
-              .filter(log => feedFilter === 'ALL' || log.severity === 'ERROR' || log.severity === 'CRITICAL')
-              .map((log) => {
+          {(() => {
+            const filteredLogs = agentLog.filter(log => feedFilter === 'ALL' || log.severity === 'ERROR' || log.severity === 'CRITICAL');
+            
+            if (filteredLogs.length === 0) {
+              return (
+                <div className="text-center font-data-tabular text-[12px] text-on-surface-variant mt-10">
+                  {feedFilter === 'ALERTS' ? 'No alerts available' : 'No logs available'}
+                </div>
+              );
+            }
+
+            return filteredLogs.map((log) => {
               const time = new Date(log.logged_at).toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC';
               const isError = log.severity === 'ERROR' || log.severity === 'CRITICAL';
               const isWarning = log.severity === 'WARNING';
@@ -253,8 +259,8 @@ export default function GlobalOperations() {
                   </div>
                 </div>
               );
-            })
-          )}
+            });
+          })()}
         </div>
       </aside>
     </>
