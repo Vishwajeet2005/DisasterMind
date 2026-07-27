@@ -21,6 +21,7 @@ export default function GlobalOperations() {
   const [statusFilter, setStatusFilter] = useState('CRITICAL');
   const [sectorFilter, setSectorFilter] = useState('ALL');
   const [assetsFilter, setAssetsFilter] = useState('DEPLOYED');
+  const [searchError, setSearchError] = useState(false);
   
   const searchInputRef = React.useRef(null);
 
@@ -37,13 +38,22 @@ export default function GlobalOperations() {
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim() !== '') {
-      const found = heatmapData.find(c => c.cell_id.toLowerCase() === searchQuery.trim().toLowerCase());
+      const q = searchQuery.trim().toLowerCase();
+      const found = gridCells.find(c => 
+        c.cell_id.toLowerCase() === q || 
+        c.name.toLowerCase().includes(q) || 
+        c.state.toLowerCase().includes(q)
+      );
+
       if (found) {
-        handleCellSelect(found, found.risk_level);
+        const threat = heatmapData.find(t => t.cell_id === found.cell_id);
+        handleCellSelect(found, threat ? threat.risk_level : 'NONE');
         setSearchQuery('');
+        setSearchError(false);
         searchInputRef.current?.blur();
       } else {
-        alert('Coordinates or Entity ID not found in current grid.');
+        setSearchError(true);
+        setTimeout(() => setSearchError(false), 3000);
       }
     }
   };
@@ -134,8 +144,8 @@ export default function GlobalOperations() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearch}
-              className="bg-transparent border-none w-full text-primary font-data-tabular text-[13px] focus:ring-0 placeholder:text-on-surface-variant outline-none" 
-              placeholder="ENTER COORDINATES OR ENTITY ID..." 
+              className={`bg-transparent border-none w-full font-data-tabular text-[13px] focus:ring-0 outline-none ${searchError ? 'text-error placeholder:text-error/70' : 'text-primary placeholder:text-on-surface-variant'}`} 
+              placeholder={searchError ? "ENTITY NOT FOUND IN ACTIVE GRID..." : "ENTER COORDINATES OR ENTITY ID..."} 
               type="text"
             />
             <div className="flex items-center gap-2 font-label-caps text-[9px] text-on-surface-variant ml-2 border border-outline-variant px-1.5 py-0.5">
