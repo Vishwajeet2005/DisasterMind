@@ -41,7 +41,7 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
 
   const latest = history[0] || {};
   const scannedAt = latest.scanned_at 
-    ? new Date(latest.scanned_at).toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC' 
+    ? new Date(latest.scanned_at).toLocaleTimeString('en-US', { hour12: true, timeZone: 'Asia/Kolkata' }) + ' IST' 
     : 'UNKNOWN';
 
   const floodPct = latest.flood_prob != null 
