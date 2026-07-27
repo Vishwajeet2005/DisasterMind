@@ -80,6 +80,10 @@ export default function Layout() {
 
         {/* Footer Navigation */}
         <div className="flex flex-col w-full px-[2px] gap-2">
+          <button aria-label="Support" className="w-full aspect-square flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-highest border border-transparent hover:border-outline-variant transition-none group">
+            <HelpCircle size={20} strokeWidth={1.5} />
+          </button>
+          
           <NavLink
             to="/settings"
             className={({ isActive }) =>
@@ -99,11 +103,6 @@ export default function Layout() {
               </>
             )}
           </NavLink>
-          
-          <button aria-label="Support" className="w-full aspect-square flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-highest border border-transparent hover:border-outline-variant transition-none group">
-            <HelpCircle size={20} strokeWidth={1.5} />
-          </button>
-          <div className="mt-4 font-data-tabular text-[9px] text-on-surface-variant rotate-180 [writing-mode:vertical-lr] text-center w-full">V 4.2.0</div>
         </div>
       </nav>
 
