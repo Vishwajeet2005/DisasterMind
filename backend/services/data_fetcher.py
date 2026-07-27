@@ -622,31 +622,41 @@ async def get_weather_batch(lats: list[float], lons: list[float]) -> list[dict]:
     if _http_client is None:
         _http_client = httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=3.0), limits=httpx.Limits(max_keepalive_connections=50, max_connections=200))
 
-    try:
-        r = await _http_client.get(url, params=params)
-        r.raise_for_status()
-        data = r.json()
-        if not isinstance(data, list):
-            data = [data] # Fallback if only 1 coord passed
-            
-        results = []
-        for d in data:
-            if "daily" not in d:
-                results.append({"error": "No daily data"})
-                continue
-            daily = d["daily"]
-            precip_array = daily.get("precipitation_sum", [0])
-            accumulated_rain = sum(p for p in precip_array[0:4] if p is not None)
+    for attempt in range(3):
+        try:
+            r = await _http_client.get(url, params=params)
+            r.raise_for_status()
+            data = r.json()
+            if not isinstance(data, list):
+                data = [data] # Fallback if only 1 coord passed
+                
+            results = []
+            for d in data:
+                if "daily" not in d:
+                    results.append({"error": "No daily data"})
+                    continue
+                daily = d["daily"]
+                precip_array = daily.get("precipitation_sum", [0])
+                accumulated_rain = sum(p for p in precip_array[0:4] if p is not None)
 
-            results.append({
-                "precipitation": [accumulated_rain],
-                "wind_speed":    daily.get("windspeed_10m_max", [0, 0, 0]),
-                "weather_code":  daily.get("weathercode", [0, 0, 0]),
-                "precip_prob":   daily.get("precipitation_probability_max", [0, 0, 0]),
-            })
-        return results
-    except Exception as e:
-        return [{"error": str(e)} for _ in lats]
+                results.append({
+                    "precipitation": [accumulated_rain],
+                    "wind_speed":    daily.get("windspeed_10m_max", [0, 0, 0]),
+                    "weather_code":  daily.get("weathercode", [0, 0, 0]),
+                    "precip_prob":   daily.get("precipitation_probability_max", [0, 0, 0]),
+                })
+            return results
+        except httpx.HTTPStatusError as e:
+            if e.response.status_code == 429:
+                print(f"[DataFetcher] Open-Meteo 429 Rate Limit. Retrying in 5s (Attempt {attempt+1}/3)")
+                await asyncio.sleep(5.0)
+                continue
+            return [{"error": str(e)} for _ in lats]
+        except Exception as e:
+            print(f"[DataFetcher] Batch Weather Error: {e}")
+            return [{"error": str(e)} for _ in lats]
+            
+    return [{"error": "Max retries exceeded for 429"} for _ in lats]
 
 
 # ─────────────────────────────────────────────────────────────────────────────

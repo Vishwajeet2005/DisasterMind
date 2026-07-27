@@ -308,7 +308,7 @@ async def run_national_scan():
         
         flagged_results = []
 
-        batch_size = 50
+        batch_size = 25
         for i in range(0, len(INDIA_GRID), batch_size):
             batch = INDIA_GRID[i:i+batch_size]
             
