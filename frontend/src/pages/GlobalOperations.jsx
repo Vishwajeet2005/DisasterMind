@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, MoreHorizontal, Settings, ListPlus } from 'lucide-react';
+import { Search, Filter, MoreHorizontal, ListPlus, Activity } from 'lucide-react';
 import IndiaMap from '../components/IndiaMap';
+import CellDetailPanel from '../components/CellDetailPanel';
 import API_CONFIG from '../api';
 
 const API_BASE = `${API_CONFIG}/api/monitor`;
@@ -180,9 +181,16 @@ export default function GlobalOperations() {
         </div>
       </section>
 
-      {/* Right: Slim Drawer (Event Feed) */}
-      <aside className="flex-[3] min-w-[320px] max-w-[480px] bg-surface-container border-l border-outline-variant flex flex-col h-full z-20">
-        <header className="h-12 border-b border-outline-variant flex items-center justify-between px-4 bg-surface-container-lowest flex-shrink-0">
+      {/* Right: Slim Drawer (Event Feed or Detail Panel) */}
+      {selectedCell ? (
+        <CellDetailPanel 
+          cell={selectedCell} 
+          riskLevel={selectedRisk} 
+          onClose={() => setSelectedCell(null)} 
+        />
+      ) : (
+        <aside className="flex-[3] min-w-[320px] max-w-[480px] bg-surface-container border-l border-outline-variant flex flex-col h-full z-20">
+          <header className="h-12 border-b border-outline-variant flex items-center justify-between px-4 bg-surface-container-lowest flex-shrink-0">
           <div className="flex items-center gap-2">
             <ListPlus className="text-primary" size={18} />
             <h2 className="font-label-caps text-[11px] text-primary tracking-widest">AUTONOMOUS EVENT FEED</h2>
@@ -286,7 +294,8 @@ export default function GlobalOperations() {
             });
           })()}
         </div>
-      </aside>
+        </aside>
+      )}
     </>
   );
 }
