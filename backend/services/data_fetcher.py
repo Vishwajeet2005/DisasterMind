@@ -112,6 +112,7 @@ async def get_weather(lat: float, lon: float) -> dict:
             "weathercode",
             "precipitation_probability_max",
             "temperature_2m_max",
+        ],
         "forecast_days":                   3,
         "past_days":                       3,
         "timezone":                        "Asia/Kolkata",
