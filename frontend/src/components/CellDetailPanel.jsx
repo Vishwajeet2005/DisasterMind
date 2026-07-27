@@ -7,18 +7,30 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
   const [satFalse, setSatFalse] = useState(null);
   const [loadingGee, setLoadingGee] = useState(true);
   const [downloading, setDownloading] = useState(false);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     if (!cell) return;
     setLoadingGee(true);
-    fetch(`${API_CONFIG}/api/earth/imagery/${cell.cell_id}`)
+    
+    // Fetch GEE Satellite Data
+    fetch(`${API_CONFIG}/api/cell/${cell.cell_id}/gee`)
       .then(r => r.json())
       .then(data => {
-        if (data.true_color) setSatTrue(data.true_color);
-        if (data.false_color) setSatFalse(data.false_color);
+        if (data.satellite?.true_color) setSatTrue(data.satellite.true_color);
+        if (data.satellite?.false_color) setSatFalse(data.satellite.false_color);
       })
       .catch(console.error)
       .finally(() => setLoadingGee(false));
+
+    // Fetch Cell Telemetry History
+    fetch(`${API_CONFIG}/api/monitor/cell/${cell.cell_id}`)
+      .then(r => r.json())
+      .then(data => {
+        setHistory(data || []);
+      })
+      .catch(console.error);
+
   }, [cell]);
 
   if (!cell) return null;
@@ -27,14 +39,14 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
   const isHigh = riskLevel === 'HIGH';
   const isWarning = isCritical || isHigh;
 
-  const floodPct = cell.predictions?.length 
-    ? `${(cell.predictions[0].probability * 100).toFixed(1)}%` 
-    : 'N/A';
-
-  const latest = cell.telemetry?.[0] || {};
-  const scannedAt = latest.timestamp 
-    ? new Date(latest.timestamp).toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC' 
+  const latest = history[0] || {};
+  const scannedAt = latest.scanned_at 
+    ? new Date(latest.scanned_at + "Z").toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC' 
     : 'UNKNOWN';
+
+  const floodPct = latest.flood_prob != null 
+    ? `${(latest.flood_prob * 100).toFixed(1)}%` 
+    : 'N/A';
 
   const handleDownloadPDF = async () => {
     setDownloading(true);
