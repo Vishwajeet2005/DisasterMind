@@ -146,27 +146,26 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
             </div>
           </div>
         </section>
+      </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 mt-auto pt-4">
-          <button 
-            className="flex-1 bg-primary text-on-primary font-label-caps text-[11px] py-3 flex justify-center items-center gap-2 hover:bg-surface-bright transition-none border border-primary"
-            onClick={() => alert("Response Plan interface not implemented yet.")}
-          >
-            VIEW SITREP
-            <ChevronRight size={14} />
-          </button>
-          
-          <button 
-            onClick={handleDownloadPDF} 
-            disabled={downloading}
-            className={`flex-1 font-label-caps text-[11px] py-3 flex justify-center items-center gap-2 border transition-none ${downloading ? 'bg-surface-container-highest border-outline-variant text-on-surface-variant' : 'bg-surface text-on-surface border-outline-variant hover:bg-surface-container-highest hover:text-primary'}`}
-          >
-            <Download size={14} />
-            {downloading ? 'GENERATING...' : 'EXPORT PDF'}
-          </button>
-        </div>
-
+      {/* Actions */}
+      <div className="flex gap-2 p-4 border-t border-outline-variant bg-surface-container flex-shrink-0">
+        <button 
+          className="flex-1 bg-primary text-on-primary font-label-caps text-[11px] py-3 flex justify-center items-center gap-2 hover:bg-surface-bright transition-none border border-primary"
+          onClick={() => alert("Response Plan interface not implemented yet.")}
+        >
+          VIEW SITREP
+          <ChevronRight size={14} />
+        </button>
+        
+        <button 
+          onClick={handleDownloadPDF} 
+          disabled={downloading}
+          className={`flex-1 font-label-caps text-[11px] py-3 flex justify-center items-center gap-2 border transition-none ${downloading ? 'bg-surface-container-highest border-outline-variant text-on-surface-variant' : 'bg-surface text-on-surface border-outline-variant hover:bg-surface-container-highest hover:text-primary'}`}
+        >
+          <Download size={14} />
+          {downloading ? 'GENERATING...' : 'EXPORT PDF'}
+        </button>
       </div>
     </aside>
   );
