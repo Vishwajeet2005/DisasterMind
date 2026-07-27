@@ -125,8 +125,8 @@ async def get_weather(lat: float, lon: float) -> dict:
             data = r.json()
         daily = data.get("daily", {})
         precip_array = daily.get("precipitation_sum", [0])
-        # Sum past 3 days + today to get flood-causing accumulated rain
-        accumulated_rain = sum(precip_array[0:4]) if len(precip_array) >= 4 else sum(precip_array)
+        # Sum past 3 days + today to get flood-causing accumulated rain, avoiding None values
+        accumulated_rain = sum(p for p in precip_array[0:4] if p is not None)
 
         return {
             "precipitation": [accumulated_rain, precip_array[-2] if len(precip_array) > 1 else 0, precip_array[-1] if len(precip_array) > 0 else 0],
@@ -636,7 +636,7 @@ async def get_weather_batch(lats: list[float], lons: list[float]) -> list[dict]:
                 continue
             daily = d["daily"]
             precip_array = daily.get("precipitation_sum", [0])
-            accumulated_rain = sum(precip_array[0:4]) if len(precip_array) >= 4 else sum(precip_array)
+            accumulated_rain = sum(p for p in precip_array[0:4] if p is not None)
 
             results.append({
                 "precipitation": [accumulated_rain],
