@@ -41,11 +41,11 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
 
   const latest = history[0] || {};
   const scannedAt = latest.scanned_at 
-    ? new Date(latest.scanned_at + "Z").toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC' 
+    ? new Date(latest.scanned_at).toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC' 
     : 'UNKNOWN';
 
   const floodPct = latest.flood_prob != null 
-    ? `${(latest.flood_prob * 100).toFixed(1)}%` 
+    ? (latest.flood_prob === 0 ? '0.0%' : latest.flood_prob < 0.001 ? '<0.1%' : `${(latest.flood_prob * 100).toFixed(1)}%`)
     : 'N/A';
 
   const handleDownloadPDF = async () => {
