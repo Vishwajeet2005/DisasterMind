@@ -324,7 +324,7 @@ async def run_national_scan():
                 tasks.append(_triage_cell(cell, weather_results_batch[idx] if idx < len(weather_results_batch) else {}, count))
                 
             results = await asyncio.gather(*tasks, return_exceptions=True)
-            await asyncio.sleep(3.0)
+            await asyncio.sleep(15.0)
             for r in results:
                 if isinstance(r, Exception):
                     continue
@@ -537,7 +537,7 @@ def start_scheduler():
     scheduler.add_job(
         run_national_scan,
         "interval",
-        hours=1,
+        hours=12,
         id="national_scan",
         replace_existing=True,
         max_instances=1,
