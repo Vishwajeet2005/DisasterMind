@@ -156,20 +156,20 @@ export default function GlobalOperations() {
           <div className="p-3 bg-surface-container-low flex flex-wrap gap-2">
             <button 
               onClick={cycleSector}
-              className={`border px-3 py-1 font-label-caps text-[11px] flex items-center gap-1 transition-none ${sectorFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:bg-surface-bright'}`}
+              className={`border px-3 py-1 font-label-caps text-[11px] flex items-center gap-1 transition-opacity ${sectorFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:opacity-90'}`}
             >
               <Filter size={14} />
               SECTOR: {sectorFilter}
             </button>
             <button 
               onClick={cycleStatus}
-              className={`border px-3 py-1 font-label-caps text-[11px] transition-none ${statusFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:bg-surface-bright'}`}
+              className={`border px-3 py-1 font-label-caps text-[11px] transition-opacity ${statusFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:opacity-90'}`}
             >
               STATUS: {statusFilter}
             </button>
             <button 
               onClick={cycleAssets}
-              className={`border px-3 py-1 font-label-caps text-[11px] transition-none ${assetsFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:bg-surface-bright'}`}
+              className={`border px-3 py-1 font-label-caps text-[11px] transition-opacity ${assetsFilter === 'ALL' ? 'border-outline-variant text-on-surface hover:bg-surface' : 'border-primary bg-primary text-on-primary hover:opacity-90'}`}
             >
               ASSETS: {assetsFilter}
             </button>
