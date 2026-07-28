@@ -1,16 +1,63 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Globe2, Gavel, LineChart, Settings, HelpCircle, Activity } from 'lucide-react';
+import { Globe2, Gavel, LineChart, Settings, HelpCircle, Menu } from 'lucide-react';
 
 export default function Layout() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   return (
     <div className="bg-background text-on-background h-screen w-full overflow-hidden flex font-body-md selection:bg-primary selection:text-on-primary">
       {/* SideNavBar */}
-      <nav className="w-sidebar-width h-screen fixed left-0 top-0 border-r border-outline-variant flex flex-col items-center py-4 bg-surface z-50 transition-none justify-between">
+      <nav className="w-sidebar-width h-screen fixed left-0 top-0 border-r border-outline-variant flex flex-col items-center py-4 bg-surface z-40 transition-none justify-between">
         <div className="flex flex-col items-center w-full gap-8">
-          {/* Brand Logo */}
-          <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-gradient-to-br from-surface-container-highest to-surface-container-low border border-outline-variant/50 shadow-lg cursor-help group" title="System Operator">
-            <Activity className="text-primary group-hover:scale-110 transition-transform duration-300" size={20} strokeWidth={2.5} />
+          
+          {/* Hamburger Menu & Dropdown */}
+          <div className="relative">
+            <button 
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="w-10 h-10 flex items-center justify-center rounded-xl bg-transparent hover:bg-surface-container-highest border border-transparent hover:border-outline-variant/50 transition-colors duration-200"
+              title="System Menu"
+            >
+              <Menu className="text-on-surface-variant hover:text-on-surface transition-colors" size={24} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {dropdownOpen && (
+              <>
+                {/* Invisible Overlay for click-outside to close */}
+                <div 
+                  className="fixed inset-0 z-50" 
+                  onClick={() => setDropdownOpen(false)}
+                ></div>
+                
+                <div className="absolute left-14 top-0 w-48 bg-surface-container-highest border border-outline-variant rounded-xl shadow-2xl py-2 z-50 flex flex-col">
+                  <div className="px-4 py-2 border-b border-outline-variant/50 mb-2">
+                    <span className="font-headline-sm font-bold text-primary">DisasterMind</span>
+                  </div>
+                  
+                  <button 
+                    onClick={() => setDropdownOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-surface-variant text-on-surface-variant hover:text-primary transition-colors text-left w-full"
+                  >
+                    <HelpCircle size={18} />
+                    <span>Support</span>
+                  </button>
+
+                  <NavLink
+                    to="/settings"
+                    onClick={() => setDropdownOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full ${
+                        isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                      }`
+                    }
+                  >
+                    <Settings size={18} />
+                    <span>Settings</span>
+                  </NavLink>
+                </div>
+              </>
+            )}
           </div>
           
           {/* Primary Navigation Tabs */}
@@ -78,31 +125,8 @@ export default function Layout() {
           </div>
         </div>
 
-        {/* Footer Navigation */}
+        {/* Empty Footer Navigation - Elements moved to dropdown */}
         <div className="flex flex-col w-full px-[2px] gap-2">
-          <button aria-label="Support" className="w-full aspect-square flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-highest border border-transparent hover:text-on-surface transition-colors duration-200 group">
-            <HelpCircle size={20} strokeWidth={1.5} />
-          </button>
-          
-          <NavLink
-            to="/settings"
-            className={({ isActive }) =>
-              `w-full aspect-square flex flex-col items-center justify-center border group relative transition-colors duration-200 ${
-                isActive
-                  ? 'text-primary bg-surface-container-highest border-transparent'
-                  : 'text-on-surface-variant hover:bg-surface-container-highest border-transparent hover:text-on-surface'
-              }`
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <Settings size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                {isActive && (
-                  <div className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-[3px] rounded-r-full h-1/2 bg-primary"></div>
-                )}
-              </>
-            )}
-          </NavLink>
         </div>
       </nav>
 
