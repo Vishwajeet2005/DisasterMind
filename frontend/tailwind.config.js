@@ -70,8 +70,8 @@ export default {
         "unit": "4px"
       },
       "fontFamily": {
-        "data-tabular": ["JetBrains Mono"],
-        "label-caps": ["JetBrains Mono"],
+        "data-tabular": ["Inter"],
+        "label-caps": ["Inter"],
         "headline-md": ["Inter"],
         "headline-lg": ["Inter"],
         "headline-sm": ["Inter"],
