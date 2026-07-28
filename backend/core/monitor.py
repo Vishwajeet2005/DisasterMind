@@ -59,7 +59,7 @@ except Exception as e:
 
 # ── Triage thresholds ────────────────────────────────────────────────────────
 TRIAGE_HOTSPOT_MIN  = 3      # FIRMS hotspots to flag a cell
-TRIAGE_RAINFALL_MIN = 15.0   # mm of accumulated rain to flag a cell
+TRIAGE_RAINFALL_MIN = 40.0   # mm/day to flag a cell
 TRIAGE_ALWAYS_SCAN  = set(PRIORITY_CELLS)  # always deep-scan these regardless
 
 # ── Scheduler instance (module-level singleton) ───────────────────────────────
@@ -153,13 +153,6 @@ async def _deep_scan_cell(cell: GridCell, hotspots: int, rain_d1: float) -> dict
     flood_prob = ml.get("flood_probability", 0)
     severity   = ml.get("severity_label", "MODERATE")
 
-    # If Earth Engine Sentinel-1 SAR detects anomalous water > 2% of the region area, drastically boost the ML flood probability
-    sar_ratio = flood_ext.get("recent_flood_ratio", 0.0)
-    if sar_ratio > 0.02:
-        # Boost flood prob based on how much of the grid cell is actually underwater right now
-        flood_prob = max(flood_prob, min(1.0, sar_ratio * 15))
-        severity = "CRITICAL"
-        
     # Determine risk level from ML before calling Groq
     risk_level = _compute_risk_level(
         flood_prob, hotspots, rain_d1,
@@ -308,7 +301,7 @@ async def run_national_scan():
         
         flagged_results = []
 
-        batch_size = 10
+        batch_size = 50
         for i in range(0, len(INDIA_GRID), batch_size):
             batch = INDIA_GRID[i:i+batch_size]
             
@@ -324,7 +317,7 @@ async def run_national_scan():
                 tasks.append(_triage_cell(cell, weather_results_batch[idx] if idx < len(weather_results_batch) else {}, count))
                 
             results = await asyncio.gather(*tasks, return_exceptions=True)
-            await asyncio.sleep(2.0)
+            await asyncio.sleep(1.0)
             for r in results:
                 if isinstance(r, Exception):
                     continue
