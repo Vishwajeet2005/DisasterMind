@@ -34,13 +34,13 @@
 
 **The Problem:** Traditional disaster response is highly reactive. Government agencies and first responders rely on fragmented data sources, delayed human analysis, and manual reporting. By the time a comprehensive Situation Report (SitRep) is compiled, the ground reality has often worsened.
 
-**The Solution:** DisasterMind is a continuous, autonomous intelligence orchestrator. It divides the entirety of India into ~7,200 geographical grid cells and continuously monitors them. The moment satellite sensors detect an anomaly (e.g., thermal hotspots, heavy precipitation, flood proxy data), the system performs a localized "Deep Scan," runs the data through a machine learning ensemble to verify the threat, and uses a large language model (LLM) to generate a tactical response plan.
+**The Solution:** DisasterMind is a continuous, autonomous intelligence orchestrator. It divides the entirety of India into exactly 4,652 geographical grid cells and continuously monitors them. The moment satellite sensors detect an anomaly (e.g., thermal hotspots, heavy precipitation, flood proxy data), the system performs a localized "Deep Scan," runs the data through a machine learning ensemble to verify the threat, and uses a large language model (LLM) to generate a tactical response plan.
 
 ---
 
 ## Core Capabilities
 
-- **Autonomous National Monitor:** Runs continuously in the background using `APScheduler`. It scrapes NASA FIRMS, Open-Meteo, and Google Earth Engine data across the entire grid on an hourly cadence.
+- **Autonomous National Monitor:** Runs continuously in the background using `APScheduler`. It scrapes NASA FIRMS, Open-Meteo, and Google Earth Engine data across the entire grid on a 12-hour cadence (optimized to respect Open-Meteo rate limits).
 - **Hybrid ML/AI Architecture:** Streams raw sensor data through a predictive ML ensemble (`Random Forest` & `XGBoost`) to establish mathematical consensus. It then feeds those predictions into Groq's `llama-3.3-70b-versatile` LLM for tactical reasoning.
 - **Telegram Alerting Engine:** Automatically dispatches high-priority, government-style text alerts directly to registered response teams the moment a CRITICAL threshold is crossed.
 - **Glassmorphic Cartography UI:** A stunning, fully responsive React frontend featuring a live threat roster, an autonomous agent log feed, and an interactive CartoDB dark-mode map overlay with 6 live WMS satellite layers.
@@ -76,7 +76,7 @@ To properly evaluate the dashboard UI, AI capabilities, and resource planners du
    - **MODERATE Landslide Threat in Uttarakhand:** Simulates 12 active fires and heavy rain in Dehradun.
 4. The page will automatically refresh, and the dashboard will populate with fully generated AI response plans, resource allocations, and critical alerts for you to explore. 
 
-*(Note: The background monitor will automatically clean up these simulated threats on its next hourly cycle).*
+*(Note: The background monitor will automatically clean up these simulated threats on its next 12-hour cycle).*
 
 ---
 
@@ -87,7 +87,7 @@ DisasterMind employs a robust, event-driven pipeline separated into distinct tri
 ```mermaid
 graph TD
     %% Triage Phase
-    A[Background Scheduler] -->|Hourly Trigger| B(Triage Pass)
+    A[Background Scheduler] -->|12-Hour Trigger| B(Triage Pass)
     B -->|NASA FIRMS + Open-Meteo| C{Anomaly Detected?}
     C -->|Yes| D[Deep Scan Triggered]
     C -->|No| E[Log as LOW Risk & Ignore]
