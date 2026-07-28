@@ -99,68 +99,8 @@ export default function Layout() {
             )}
           </div>
           
-          {/* Primary Navigation Tabs */}
+          {/* Primary Navigation Tabs removed (now in dropdown) */}
           <div className="flex flex-col w-full px-[2px] gap-2">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                `w-full aspect-square flex flex-col items-center justify-center border group relative transition-colors duration-200 ${
-                  isActive
-                    ? 'text-primary bg-surface-container-highest border-transparent'
-                    : 'text-on-surface-variant hover:bg-surface-container-highest border-transparent hover:text-on-surface'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Globe2 size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                  {isActive && (
-                    <div className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-[3px] rounded-r-full h-1/2 bg-primary"></div>
-                  )}
-                </>
-              )}
-            </NavLink>
-
-            <NavLink
-              to="/threats"
-              className={({ isActive }) =>
-                `w-full aspect-square flex flex-col items-center justify-center border group relative transition-colors duration-200 ${
-                  isActive
-                    ? 'text-primary bg-surface-container-highest border-transparent'
-                    : 'text-on-surface-variant hover:bg-surface-container-highest border-transparent hover:text-on-surface'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Gavel size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                  {isActive && (
-                    <div className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-[3px] rounded-r-full h-1/2 bg-primary"></div>
-                  )}
-                </>
-              )}
-            </NavLink>
-
-            <NavLink
-              to="/analytics"
-              className={({ isActive }) =>
-                `w-full aspect-square flex flex-col items-center justify-center border group relative transition-colors duration-200 ${
-                  isActive
-                    ? 'text-primary bg-surface-container-highest border-transparent'
-                    : 'text-on-surface-variant hover:bg-surface-container-highest border-transparent hover:text-on-surface'
-                }`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <LineChart size={20} strokeWidth={isActive ? 2.5 : 1.5} />
-                  {isActive && (
-                    <div className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-[3px] rounded-r-full h-1/2 bg-primary"></div>
-                  )}
-                </>
-              )}
-            </NavLink>
-
           </div>
         </div>
 
