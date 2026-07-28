@@ -1,7 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body, html, #root { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; }
+body, html, #root { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; }
 * { border-radius: 0 !important; }
 .threat-grid { display: grid; grid-template-columns: 120px 2fr 150px 150px 150px 120px; gap: 16px; align-items: center; }
 @media (max-width: 1024px) { .threat-grid { grid-template-columns: 100px 1.5fr 120px 120px 100px; } .hide-tablet { display: none; } }
@@ -41,4 +42,27 @@ body, html, #root { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow
 .brutal-toggle input:checked + .track .thumb {
     background-color: #ffffff;
     transform: translateX(24px);
+}
+.brutal-toggle input:checked + .track .knob { left: calc(100% - 24px); }
+.brutal-toggle input:focus + .track { border-color: theme('colors.primary'); }
+
+/* Dark Mode Leaflet Overrides */
+.leaflet-bar a, .leaflet-bar a:hover {
+  background-color: theme('colors.surface-container-highest') !important;
+  color: theme('colors.primary') !important;
+  border-bottom: 1px solid theme('colors.outline-variant') !important;
+}
+.leaflet-touch .leaflet-bar {
+  border: 1px solid theme('colors.outline-variant') !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+.leaflet-control-attribution {
+  background-color: transparent !important;
+  color: theme('colors.on-surface-variant') !important;
+  text-shadow: 1px 1px 2px black !important;
+}
+.leaflet-control-attribution a {
+  color: theme('colors.primary') !important;
 }

@@ -199,8 +199,8 @@ export default function GlobalOperations() {
           onClose={() => setSelectedCell(null)} 
         />
       ) : (
-        <aside className="flex-[3] min-w-[320px] max-w-[480px] bg-surface-container border-l border-outline-variant flex flex-col h-full z-20">
-          <header className="h-12 border-b border-outline-variant flex items-center justify-between px-4 bg-surface-container-lowest flex-shrink-0">
+        <aside className="flex-[3] min-w-[320px] max-w-[480px] bg-surface-container/80 backdrop-blur-xl border-l border-outline-variant flex flex-col h-full z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.5)]">
+          <header className="h-12 border-b border-outline-variant flex items-center justify-between px-4 bg-surface/50 backdrop-blur-md flex-shrink-0">
           <div className="flex items-center gap-2">
             <ListPlus className="text-primary" size={18} />
             <h2 className="font-label-caps text-[11px] text-primary tracking-widest">AUTONOMOUS EVENT FEED</h2>
@@ -211,7 +211,7 @@ export default function GlobalOperations() {
           </div>
         </header>
 
-        <div className="h-8 border-b border-outline-variant flex bg-surface flex-shrink-0 relative">
+        <div className="h-8 border-b border-outline-variant flex bg-surface/50 backdrop-blur-md flex-shrink-0 relative">
           <button 
             onClick={() => setFeedFilter('ALL')}
             className={`flex-1 font-label-caps text-[10px] border-r border-outline-variant hover:bg-surface-container-highest transition-none ${feedFilter === 'ALL' ? 'text-on-surface bg-surface-container-highest' : 'text-on-surface-variant'}`}
