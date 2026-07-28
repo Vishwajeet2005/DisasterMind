@@ -268,7 +268,7 @@ export default function GlobalOperations() {
             }
 
             return filteredLogs.map((log) => {
-              const time = new Date(log.logged_at).toLocaleTimeString('en-US', { hour12: false, timeZone: 'UTC' }) + ' UTC';
+              const time = new Date(log.logged_at).toLocaleTimeString('en-US', { hour12: true, timeZone: 'Asia/Kolkata' }) + ' IST';
               const isError = log.severity === 'ERROR' || log.severity === 'CRITICAL';
               const isWarning = log.severity === 'WARNING';
               

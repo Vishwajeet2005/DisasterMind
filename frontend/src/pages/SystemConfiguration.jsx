@@ -168,7 +168,7 @@ export default function SystemConfiguration() {
                 </div>
                 <div className="flex justify-between border-b border-surface-container-highest pb-1">
                   <span>LAST SYNC</span>
-                  <span className="text-on-background">{new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC</span>
+                  <span className="text-on-background">{new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata', hour12: true, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(',', '')} IST</span>
                 </div>
                 <div className="flex justify-between border-b border-surface-container-highest pb-1">
                   <span>MEMORY ALLOC</span>
