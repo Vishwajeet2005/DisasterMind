@@ -35,9 +35,48 @@ export default function Layout() {
                     <span className="font-headline-sm font-bold text-primary">DisasterMind</span>
                   </div>
                   
+                  <NavLink
+                    to="/"
+                    onClick={() => setDropdownOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full ${
+                        isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                      }`
+                    }
+                  >
+                    <Globe2 size={18} />
+                    <span>Dashboard</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/threats"
+                    onClick={() => setDropdownOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full ${
+                        isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                      }`
+                    }
+                  >
+                    <Gavel size={18} />
+                    <span>Threats</span>
+                  </NavLink>
+
+                  <NavLink
+                    to="/analytics"
+                    onClick={() => setDropdownOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full mb-2 border-b border-outline-variant/30 pb-4 ${
+                        isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                      }`
+                    }
+                  >
+                    <LineChart size={18} />
+                    <span>Analytics</span>
+                  </NavLink>
+                  
                   <button 
                     onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-surface-variant text-on-surface-variant hover:text-primary transition-colors text-left w-full"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-surface-variant text-on-surface-variant hover:text-primary transition-colors text-left w-full mt-2"
                   >
                     <HelpCircle size={18} />
                     <span>Support</span>
