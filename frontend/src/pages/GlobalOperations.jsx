@@ -135,7 +135,7 @@ export default function GlobalOperations() {
         </div>
 
         {/* Floating Command Palette */}
-        <div className="absolute top-container-margin left-container-margin w-[480px] bg-surface-container-low border border-outline-variant z-10 flex flex-col backdrop-blur-sm shadow-none">
+        <div className="absolute top-container-margin left-[80px] w-[480px] bg-surface-container-low border border-outline-variant z-10 flex flex-col backdrop-blur-sm shadow-none">
           <div className="flex items-center border-b border-outline-variant px-4 h-12 bg-surface">
             <Search className="text-on-surface-variant mr-3" size={18} />
             <input 

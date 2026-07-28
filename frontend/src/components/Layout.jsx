@@ -9,7 +9,7 @@ export default function Layout() {
     <div className="bg-background text-on-background h-screen w-full overflow-hidden flex font-body-md selection:bg-primary selection:text-on-primary relative">
       
       {/* Floating Hamburger Menu & Dropdown */}
-      <div className="absolute left-4 top-4 z-50">
+      <div className="absolute left-[24px] top-[24px] z-50">
         <button 
           onClick={() => setDropdownOpen(!dropdownOpen)}
           className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface/80 backdrop-blur-md hover:bg-surface-container-highest border border-outline-variant/50 transition-colors duration-200 shadow-md"
