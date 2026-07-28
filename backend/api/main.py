@@ -141,12 +141,17 @@ async def _request_logger(request: Request, call_next):
     t0       = time.time()
     response = await call_next(request)
     elapsed  = int((time.time() - t0) * 1000)
+    
+    path = str(request.url.path)
+    if path in ("/api/monitor/heatmap", "/api/monitor/feed"):
+        return response
+
     try:
         log_request(
             event            = "http_request",
             region           = "—",
             user_ip          = request.client.host if request.client else "unknown",
-            endpoint         = str(request.url.path),
+            endpoint         = path,
             method           = request.method,
             status_code      = response.status_code,
             response_time_ms = elapsed,
