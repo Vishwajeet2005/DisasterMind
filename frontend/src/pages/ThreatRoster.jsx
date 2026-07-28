@@ -30,7 +30,7 @@ export default function ThreatRoster() {
   };
 
   return (
-    <div className="w-full h-screen overflow-y-auto pt-10 px-8 pb-20 bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary">
+    <div className="w-full h-screen overflow-y-auto pt-[24px] pl-[80px] pr-8 pb-20 bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary">
       <div className="max-w-[1600px] mx-auto">
         {/* Page Header */}
         <div className="flex justify-between items-end mb-6 border-b border-outline-variant pb-4">

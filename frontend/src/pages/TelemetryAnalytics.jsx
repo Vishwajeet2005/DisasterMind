@@ -25,7 +25,7 @@ export default function TelemetryAnalytics() {
   }, []);
 
   return (
-    <div className="w-full h-screen overflow-y-auto pt-10 px-8 pb-20 bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary">
+    <div className="w-full h-screen overflow-y-auto pt-[24px] pl-[80px] pr-8 pb-20 bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary">
       <div className="max-w-[1600px] mx-auto flex flex-col gap-container-margin">
         {/* Page Header */}
         <div className="flex justify-between items-end border-b border-outline-variant pb-4">
