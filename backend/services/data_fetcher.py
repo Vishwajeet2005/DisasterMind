@@ -60,25 +60,22 @@ async def fetch_all_india_hotspots() -> list[tuple[float, float, float]]:
     """
     url = "https://firms.modaps.eosdis.nasa.gov/data/active_fire/noaa-20-viirs-c2/csv/J1_VIIRS_C2_South_Asia_24h.csv"
     
-    global _http_client
-    if _http_client is None:
-        _http_client = httpx.AsyncClient(timeout=httpx.Timeout(10.0, connect=3.0), limits=httpx.Limits(max_keepalive_connections=50, max_connections=200))
-
     try:
-        r = await _http_client.get(url)
-        r.raise_for_status()
-        
-        hotspots = []
-        reader = csv.DictReader(io.StringIO(r.text))
-        for row in reader:
-            try:
-                lat = float(row['latitude'])
-                lon = float(row['longitude'])
-                bright = float(row.get('bright_ti4', 300.0))
-                hotspots.append((lat, lon, bright))
-            except (ValueError, KeyError):
-                continue
-        return hotspots
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            r = await client.get(url)
+            r.raise_for_status()
+            
+            hotspots = []
+            reader = csv.DictReader(io.StringIO(r.text))
+            for row in reader:
+                try:
+                    lat = float(row['latitude'])
+                    lon = float(row['longitude'])
+                    bright = float(row.get('bright_ti4', 300.0))
+                    hotspots.append((lat, lon, bright))
+                except (ValueError, KeyError):
+                    continue
+            return hotspots
     except Exception as e:
         print(f"[DataFetcher] Bulk FIRMS error: {e}")
         return []
