@@ -613,7 +613,9 @@ async def get_weather_batch(lats: list[float], lons: list[float]) -> list[dict]:
         "latitude":  ",".join(str(lat) for lat in lats),
         "longitude": ",".join(str(lon) for lon in lons),
         "daily":     "precipitation_sum,windspeed_10m_max,weathercode,precipitation_probability_max",
-        "timezone":  "auto"
+        "timezone":  "auto",
+        "forecast_days": 3,
+        "past_days": 3,
     }
     
     global _http_client
@@ -633,8 +635,11 @@ async def get_weather_batch(lats: list[float], lons: list[float]) -> list[dict]:
                 results.append({"error": "No daily data"})
                 continue
             daily = d["daily"]
+            precip_array = daily.get("precipitation_sum", [0])
+            accumulated_rain = sum(p for p in precip_array[0:4] if p is not None)
+            
             results.append({
-                "precipitation": daily.get("precipitation_sum", [0, 0, 0]),
+                "precipitation": [accumulated_rain, precip_array[-2] if len(precip_array) > 1 else 0, precip_array[-1] if len(precip_array) > 0 else 0],
                 "wind_speed":    daily.get("windspeed_10m_max", [0, 0, 0]),
                 "weather_code":  daily.get("weathercode", [0, 0, 0]),
                 "precip_prob":   daily.get("precipitation_probability_max", [0, 0, 0]),

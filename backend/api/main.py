@@ -273,8 +273,8 @@ async def analyze(request: Request, body: AnalysisRequest, api_key: str = Depend
                     risk_level = result.get("situation_report", {}).get("risk_level", "UNKNOWN"),
                     risk_score = result.get("situation_report", {}).get("risk_score", 0),
                     flood_prob = result.get("ml_prediction", {}).get("flood_probability", 0),
-                    hotspots   = 0, # Force scans don't parse the raw CSV in this layer
-                    rainfall_d1= 0,
+                    hotspots   = result.get("raw_data", {}).get("hotspot_count", 0),
+                    rainfall_d1= result.get("raw_data", {}).get("weather", {}).get("precipitation", [0.0])[0],
                     severity   = result.get("ml_prediction", {}).get("severity_label", "UNKNOWN"),
                     raw_data   = result,
                 )
