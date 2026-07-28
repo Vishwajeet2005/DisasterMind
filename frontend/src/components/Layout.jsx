@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Globe2, Gavel, LineChart, Settings, HelpCircle, Menu } from 'lucide-react';
+import { LayoutDashboard, ShieldAlert, Activity, Settings, HelpCircle, Menu } from 'lucide-react';
 
 export default function Layout() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function Layout() {
                   }`
                 }
               >
-                <Globe2 size={18} />
+                <LayoutDashboard size={18} />
                 <span>Dashboard</span>
               </NavLink>
 
@@ -54,7 +54,7 @@ export default function Layout() {
                   }`
                 }
               >
-                <Gavel size={18} />
+                <ShieldAlert size={18} />
                 <span>Threats</span>
               </NavLink>
 
@@ -67,7 +67,7 @@ export default function Layout() {
                   }`
                 }
               >
-                <LineChart size={18} />
+                <Activity size={18} />
                 <span>Analytics</span>
               </NavLink>
               
