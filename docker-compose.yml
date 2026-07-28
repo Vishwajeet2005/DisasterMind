@@ -39,7 +39,7 @@ services:
       - backend/.env
     volumes:
       - ./backend/demo_cache:/app/backend/demo_cache
-      - ./backend/ml_layer:/app/backend/ml_layer
+      - ./backend/models/ml_layer:/app/backend/models/ml_layer
       - ~/.config/earthengine/credentials:/root/.config/earthengine/credentials:ro
     depends_on:
       postgres:
