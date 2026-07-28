@@ -144,8 +144,8 @@ export default function GlobalOperations() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearch}
-              className={`bg-transparent border-none w-full font-data-tabular text-[13px] focus:ring-0 outline-none ${searchError ? 'text-error placeholder:text-error/70' : 'text-primary placeholder:text-on-surface-variant'}`} 
-              placeholder={searchError ? "ENTITY NOT FOUND IN ACTIVE GRID..." : "ENTER COORDINATES OR ENTITY ID..."} 
+              className={`bg-transparent border-none w-full font-body-md text-[14px] focus:ring-0 outline-none ${searchError ? 'text-error placeholder:text-error/70' : 'text-primary placeholder:text-on-surface-variant'}`} 
+              placeholder={searchError ? "No matching entities found in the active sector." : "Search by geographic coordinates or entity designation..."} 
               type="text"
             />
             <div className="flex items-center gap-2 font-label-caps text-[9px] text-on-surface-variant ml-2 border border-outline-variant px-1.5 py-0.5">

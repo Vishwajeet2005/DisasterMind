@@ -76,8 +76,8 @@ export default {
         "headline-lg": ["Inter"],
         "headline-sm": ["Inter"],
         "headline-lg-mobile": ["Inter"],
-        "body-lg": ["JetBrains Mono"],
-        "body-md": ["JetBrains Mono"]
+        "body-lg": ["Inter"],
+        "body-md": ["Inter"]
       },
       "fontSize": {
         "data-tabular": ["13px", {"lineHeight": "1.2", "letterSpacing": "0em", "fontWeight": "500"}],
