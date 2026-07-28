@@ -308,7 +308,7 @@ async def run_national_scan():
         
         flagged_results = []
 
-        batch_size = 25
+        batch_size = 100
         for i in range(0, len(INDIA_GRID), batch_size):
             batch = INDIA_GRID[i:i+batch_size]
             
@@ -324,7 +324,7 @@ async def run_national_scan():
                 tasks.append(_triage_cell(cell, weather_results_batch[idx] if idx < len(weather_results_batch) else {}, count))
                 
             results = await asyncio.gather(*tasks, return_exceptions=True)
-            await asyncio.sleep(1.0)
+            await asyncio.sleep(3.0)
             for r in results:
                 if isinstance(r, Exception):
                     continue

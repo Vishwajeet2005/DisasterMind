@@ -648,8 +648,8 @@ async def get_weather_batch(lats: list[float], lons: list[float]) -> list[dict]:
             return results
         except httpx.HTTPStatusError as e:
             if e.response.status_code == 429:
-                print(f"[DataFetcher] Open-Meteo 429 Rate Limit. Retrying in 5s (Attempt {attempt+1}/3)")
-                await asyncio.sleep(5.0)
+                print(f"[DataFetcher] Open-Meteo 429 Rate Limit. Retrying in 60s (Attempt {attempt+1}/3)")
+                await asyncio.sleep(60.0)
                 continue
             return [{"error": str(e)} for _ in lats]
         except Exception as e:
