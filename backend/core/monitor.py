@@ -537,7 +537,7 @@ def start_scheduler():
     scheduler.add_job(
         run_national_scan,
         "interval",
-        hours=12,
+        hours=1,
         id="national_scan",
         replace_existing=True,
         max_instances=1,
