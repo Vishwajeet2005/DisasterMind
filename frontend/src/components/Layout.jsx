@@ -27,8 +27,8 @@ export default function Layout() {
               onClick={() => setDropdownOpen(false)}
             ></div>
             
-            <div className="absolute left-0 top-12 w-52 bg-surface-container-highest border border-outline-variant rounded-xl shadow-2xl py-2 z-50 flex flex-col">
-              <div className="px-4 py-2 border-b border-outline-variant/50 mb-2">
+            <div className="absolute left-0 top-12 w-56 bg-surface/80 backdrop-blur-xl border border-outline-variant/50 rounded-2xl shadow-[0_16px_40px_rgba(0,0,0,0.6)] py-3 z-50 flex flex-col overflow-hidden">
+              <div className="px-5 py-2 border-b border-outline-variant/30 mb-2">
                 <span className="font-headline-sm font-bold text-primary">DisasterMind</span>
               </div>
               
@@ -36,8 +36,8 @@ export default function Layout() {
                 to="/"
                 onClick={() => setDropdownOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full ${
-                    isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                  `flex items-center gap-3 px-5 py-3 mx-2 rounded-xl transition-all duration-200 ${
+                    isActive ? 'text-primary bg-primary/10 font-bold shadow-[inset_4px_0_0_0_rgba(168,199,250,1)]' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50'
                   }`
                 }
               >
@@ -49,8 +49,8 @@ export default function Layout() {
                 to="/threats"
                 onClick={() => setDropdownOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full ${
-                    isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                  `flex items-center gap-3 px-5 py-3 mx-2 rounded-xl transition-all duration-200 ${
+                    isActive ? 'text-primary bg-primary/10 font-bold shadow-[inset_4px_0_0_0_rgba(168,199,250,1)]' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50'
                   }`
                 }
               >
@@ -62,8 +62,8 @@ export default function Layout() {
                 to="/analytics"
                 onClick={() => setDropdownOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full mb-2 border-b border-outline-variant/30 pb-4 ${
-                    isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                  `flex items-center gap-3 px-5 py-3 mx-2 rounded-xl transition-all duration-200 mb-2 ${
+                    isActive ? 'text-primary bg-primary/10 font-bold shadow-[inset_4px_0_0_0_rgba(168,199,250,1)]' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50'
                   }`
                 }
               >
@@ -71,9 +71,11 @@ export default function Layout() {
                 <span>Analytics</span>
               </NavLink>
               
+              <div className="mx-4 border-t border-outline-variant/30 my-1"></div>
+              
               <button 
                 onClick={() => setDropdownOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-surface-variant text-on-surface-variant hover:text-primary transition-colors text-left w-full mt-2"
+                className="flex items-center gap-3 px-5 py-3 mx-2 mt-1 rounded-xl transition-all duration-200 text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50 text-left"
               >
                 <HelpCircle size={18} />
                 <span>Support</span>
@@ -83,8 +85,8 @@ export default function Layout() {
                 to="/settings"
                 onClick={() => setDropdownOpen(false)}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 hover:bg-surface-variant transition-colors w-full ${
-                    isActive ? 'text-primary bg-surface-variant/50' : 'text-on-surface-variant hover:text-primary'
+                  `flex items-center gap-3 px-5 py-3 mx-2 rounded-xl transition-all duration-200 ${
+                    isActive ? 'text-primary bg-primary/10 font-bold shadow-[inset_4px_0_0_0_rgba(168,199,250,1)]' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/50'
                   }`
                 }
               >
