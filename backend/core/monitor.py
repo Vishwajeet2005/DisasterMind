@@ -308,7 +308,11 @@ async def run_national_scan():
             # 1. Batch fetch weather for 50 cells — stays within Open-Meteo rate limits
             lats = [c.lat for c in batch]
             lons = [c.lon for c in batch]
-            weather_results_batch = await get_weather_batch(lats, lons)
+            try:
+                weather_results_batch = await asyncio.wait_for(get_weather_batch(lats, lons), timeout=15.0)
+            except asyncio.TimeoutError:
+                print(f"[Monitor] Weather batch timed out — skipping batch, continuing scan")
+                weather_results_batch = [{"error": "timeout"} for _ in batch]
             
             # 2. Process triage using the pre-fetched weather and hotspots
             tasks = []

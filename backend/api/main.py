@@ -143,7 +143,8 @@ async def _request_logger(request: Request, call_next):
     elapsed  = int((time.time() - t0) * 1000)
     
     path = str(request.url.path)
-    if path in ("/", "/health", "/api/monitor/heatmap", "/api/monitor/feed"):
+    _SILENT_PATHS = {"/", "/health", "/api/monitor/heatmap", "/api/monitor/feed", "/api/monitor/status"}
+    if path in _SILENT_PATHS:
         return response
 
     try:
