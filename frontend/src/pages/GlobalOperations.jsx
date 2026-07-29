@@ -15,6 +15,7 @@ export default function GlobalOperations() {
   
   const [selectedCell, setSelectedCell] = useState(null);
   const [selectedRisk, setSelectedRisk] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('CONNECTED');
 
   // Command Palette State
   const [searchQuery, setSearchQuery] = useState('');
@@ -98,8 +99,8 @@ export default function GlobalOperations() {
     const fetchFast = () => {
       fetch(`${API_BASE}/heatmap`)
         .then(r => r.json())
-        .then(d => setHeatmapData(Array.isArray(d) ? d : []))
-        .catch(console.error);
+        .then(d => { setHeatmapData(Array.isArray(d) ? d : []); setConnectionStatus('CONNECTED'); })
+        .catch(err => { console.error(err); setConnectionStatus('DISCONNECTED'); });
 
       fetch(`${API_BASE}/feed`)
         .then(r => r.json())
@@ -182,11 +183,11 @@ export default function GlobalOperations() {
           <div className="font-data-tabular text-[14px] text-primary">
             {selectedCell 
               ? `LAT: ${selectedCell.lat.toFixed(4)}° / LNG: ${selectedCell.lon.toFixed(4)}°` 
-              : "LAT: 45.9281° / LNG: -12.3940°"}
+              : "LAT: --.----° / LNG: --.----°"}
           </div>
-          <div className="font-data-tabular text-[11px] text-on-surface-variant mt-2 flex items-center gap-2">
-            <div className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
-            LINK SECURE
+          <div className={`font-data-tabular text-[11px] mt-2 flex items-center gap-2 ${connectionStatus === 'CONNECTED' ? 'text-on-surface-variant' : 'text-error'}`}>
+            <div className={`w-1.5 h-1.5 rounded-full ${connectionStatus === 'CONNECTED' ? 'bg-primary animate-pulse' : 'bg-error'}`}></div>
+            {connectionStatus === 'CONNECTED' ? 'LINK SECURE' : 'LINK DISCONNECTED'}
           </div>
         </div>
       </section>

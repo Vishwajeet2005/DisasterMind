@@ -8,6 +8,7 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
   const [loadingGee, setLoadingGee] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [history, setHistory] = useState([]);
+  const [fetchError, setFetchError] = useState(false);
 
   useEffect(() => {
     if (!cell) return;
@@ -28,8 +29,12 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
       .then(r => r.json())
       .then(data => {
         setHistory(data || []);
+        setFetchError(false);
       })
-      .catch(console.error);
+      .catch(err => {
+        console.error(err);
+        setFetchError(true);
+      });
 
   }, [cell]);
 
@@ -94,6 +99,11 @@ export default function CellDetailPanel({ cell, riskLevel, onClose }) {
           <div className="font-data-tabular text-[11px] text-on-surface-variant flex items-center gap-1 mt-1 uppercase">
             <MapPin size={12} /> {cell.state} | {cell.cell_id}
           </div>
+          {fetchError && (
+            <div className="text-error font-data-tabular text-[11px] mt-2 px-2 py-1 bg-[#2d1212] border border-error">
+              CONNECTION LOST: Displaying cached telemetry
+            </div>
+          )}
         </div>
 
         {/* Core Telemetry Grid */}
