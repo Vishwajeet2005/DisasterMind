@@ -257,7 +257,10 @@ export default function GlobalOperations() {
 
         <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
           {(() => {
-            const filteredLogs = agentLog.filter(log => feedFilter === 'ALL' || log.severity === 'ERROR' || log.severity === 'CRITICAL');
+            const filteredLogs = agentLog.filter(log => {
+              if (feedFilter === 'ALL') return true;
+              return ['CRITICAL', 'HIGH', 'ALERT', 'ERROR'].includes(log.severity);
+            });
             
             if (filteredLogs.length === 0) {
               return (
@@ -269,8 +272,8 @@ export default function GlobalOperations() {
 
             return filteredLogs.map((log) => {
               const time = new Date(log.logged_at).toLocaleTimeString('en-US', { hour12: true, timeZone: 'Asia/Kolkata' }) + ' IST';
-              const isError = log.severity === 'ERROR' || log.severity === 'CRITICAL';
-              const isWarning = log.severity === 'WARNING';
+              const isError = ['ERROR', 'CRITICAL', 'HIGH'].includes(log.severity);
+              const isWarning = ['WARNING', 'ALERT'].includes(log.severity);
               
               let containerClass = "border bg-surface flex flex-col p-3 hover:bg-surface-container-highest cursor-pointer group ";
               let timeClass = "font-data-tabular text-[11px] font-bold ";
@@ -279,8 +282,8 @@ export default function GlobalOperations() {
                 containerClass += "border-error-container";
                 timeClass += "text-error";
               } else if (isWarning) {
-                containerClass += "border-outline-variant";
-                timeClass += "text-on-surface";
+                containerClass += "border-primary";
+                timeClass += "text-primary";
               } else {
                 containerClass += "border-outline-variant";
                 timeClass += "text-on-surface-variant";

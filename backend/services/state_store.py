@@ -436,7 +436,7 @@ def get_national_heatmap() -> List[dict]:
     with _lock:
         conn = _get_conn()
         rows = conn.execute("""
-            SELECT ch.*
+            SELECT ch.cell_id, ch.cell_name, ch.state, ch.lat, ch.lon, ch.risk_level, ch.risk_score, ch.flood_prob, ch.hotspots, ch.rainfall_d1, ch.severity
             FROM cell_history ch
             INNER JOIN (
                 SELECT cell_id, MAX(scanned_at) as latest
@@ -444,6 +444,7 @@ def get_national_heatmap() -> List[dict]:
                 GROUP BY cell_id
             ) latest ON ch.cell_id = latest.cell_id
                      AND ch.scanned_at = latest.latest
+            WHERE ch.risk_level != 'NONE'
             ORDER BY ch.risk_score DESC
         """).fetchall()
         conn.close()
