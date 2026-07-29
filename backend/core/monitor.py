@@ -84,7 +84,7 @@ async def _triage_cell(cell: GridCell, weather: dict, hotspots: int) -> dict:
 
     return {
         "cell": cell,
-        "flagged": flagged,
+        "flagged": flagged, "hotspots": hotspots, "rain_d1": rain_d1,
         "hotspots": hotspots,
         "rain_d1": rain_d1,
     }
@@ -581,3 +581,4 @@ def get_scheduler_status() -> dict:
         "next_scan":      str(scheduler.get_job("national_scan").next_run_time)
                           if scheduler.get_job("national_scan") else None,
     }
+
