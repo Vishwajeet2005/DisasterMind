@@ -4,6 +4,13 @@
 @tailwind utilities;
 body, html, #root { margin: 0; padding: 0; width: 100vw; height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; }
 * { border-radius: 0 !important; }
+
+:root {
+  --risk-critical-color: #ff1100;
+  --risk-high-color: #ff5540;
+  --risk-moderate-color: #ffaa00;
+  --risk-low-color: #aadd00;
+}
 .threat-grid { display: grid; grid-template-columns: 120px 2fr 150px 150px 150px 120px; gap: 16px; align-items: center; }
 @media (max-width: 1024px) { .threat-grid { grid-template-columns: 100px 1.5fr 120px 120px 100px; } .hide-tablet { display: none; } }
 
