@@ -98,24 +98,21 @@ async def _deep_scan_cell(cell: GridCell, hotspots: int, rain_d1: float) -> dict
     Returns structured result with risk level.
     """
     # Google Earth Engine Suite
-    from services.data_fetcher import get_gee_flood_extent, get_gee_population, get_satellite_thumbnail
+    from services.data_fetcher import get_gee_flood_extent, get_gee_population
     try:
-        elev, flood_ext, pop, sat = await asyncio.gather(
+        elev, flood_ext, pop = await asyncio.gather(
             get_gee_topography(cell.lat, cell.lon),
             get_gee_flood_extent(cell.lat, cell.lon),
             get_gee_population(cell.lat, cell.lon),
-            get_satellite_thumbnail(cell.lat, cell.lon),
             return_exceptions=True
         )
         if isinstance(elev, Exception): elev = {"avg_elevation": 200, "flood_risk": "MODERATE", "landslide_risk": "MODERATE"}
         if isinstance(flood_ext, Exception): flood_ext = {"recent_flood_ratio": 0.0}
         if isinstance(pop, Exception): pop = {"population_density": cell.population_density, "historical_floods": 0.0}
-        if isinstance(sat, Exception): sat = {"true_color": "", "false_color": ""}
     except Exception:
         elev = {"avg_elevation": 200, "flood_risk": "MODERATE", "landslide_risk": "MODERATE"}
         flood_ext = {"recent_flood_ratio": 0.0}
         pop = {"population_density": cell.population_density, "historical_floods": 0.0}
-        sat = {"true_color": "", "false_color": ""}
 
     # Roads
     try:
@@ -193,9 +190,7 @@ async def _deep_scan_cell(cell: GridCell, hotspots: int, rain_d1: float) -> dict
         "road_count": road_count,
         "gee_flood":  flood_ext,
         "gee_population": pop,
-        "satellite":  sat,
     }
-
 
 def _compute_risk_level(
     flood_prob: float,
