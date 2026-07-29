@@ -113,8 +113,6 @@ async def get_weather(lat: float, lon: float) -> dict:
             "precipitation_probability_max",
             "temperature_2m_max",
         ],
-        "forecast_days":                   3,
-        "past_days":                       3,
         "timezone":                        "Asia/Kolkata",
     }
 
@@ -124,12 +122,9 @@ async def get_weather(lat: float, lon: float) -> dict:
             r.raise_for_status()
             data = r.json()
         daily = data.get("daily", {})
-        precip_array = daily.get("precipitation_sum", [0])
-        # Sum past 3 days + today to get flood-causing accumulated rain, avoiding None values
-        accumulated_rain = sum(p for p in precip_array[0:4] if p is not None)
 
         return {
-            "precipitation": [accumulated_rain, precip_array[-2] if len(precip_array) > 1 else 0, precip_array[-1] if len(precip_array) > 0 else 0],
+            "precipitation": daily.get("precipitation_sum", [0, 0, 0]),
             "wind_speed":    daily.get("windspeed_10m_max", [0, 0, 0]),
             "weather_code":  daily.get("weathercode", [0, 0, 0]),
             "precip_prob":   daily.get("precipitation_probability_max", [0, 0, 0]),
