@@ -245,8 +245,3 @@ We welcome contributions from data scientists, frontend engineers, and disaster 
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-<div align="center">
-  <br/>
-  <i>Built to save lives through data-driven autonomy.</i>
-</div>
